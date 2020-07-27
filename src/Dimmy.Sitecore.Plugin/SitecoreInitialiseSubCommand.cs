@@ -5,12 +5,12 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Dimmy.Cli.Commands.Project;
 using Dimmy.Cli.Extensions;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
-using Dimmy.Engine.Models;
 using Dimmy.Engine.Services;
 using Dimmy.Sitecore.Plugin.Topologies;
 
@@ -33,14 +33,57 @@ namespace Dimmy.Sitecore.Plugin
         protected override void HydrateCommand(Command command)
         {
             command.Handler = CommandHandler.Create((SitecoreInitialise si) =>DoInitialise(si));
+            
+            command.AddOption(new Option<string>("--license-path", "Path to the Sitecore License"));
+            command.AddOption(new Option<string>("--topology-name", "The Sitecore topology you"));
+            command.AddOption(new Option<string>("--sitecore-version", "The Sitecore Version"));
+            command.AddOption(new Option<string>("--nano-server-version"));
+            command.AddOption(new Option<string>("--windows-server-core-version"));
         }
 
         private async Task DoInitialise(SitecoreInitialise si)
         {
             GetUserInput(si);
+            ResolveTemplate(si);
+            await AddPrivateVariables(si);
+            AddPublicVariables(si);
+            await InitialiseProjectCommandHandler.Handle(si);
+        }
 
-            var composeTemplate = new DockerComposeTemplate();
-            
+        private static async Task AddPrivateVariables(SitecoreInitialise si)
+        {
+            si.PrivateVariables = new Dictionary<string, string>
+            {
+                {"Sitecore.SqlSaPassword", NonceService.Generate()},
+                {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
+                {"Sitecore.License", await CreatEncodedeSitecoreLicense(si)},
+                {"Sitecore.CMPort", "44001"},
+                {"Sitecore.CDPort", "44002"},
+                {"Sitecore.SqlPort", "44010"},
+                {"Sitecore.SolrPort", "44011"}
+            };
+        }
+
+        private static void AddPublicVariables(SitecoreInitialise si)
+        {
+            var windowsServerCore = $"{si.SitecoreVersion}-windowsservercore-{si.WindowsServerCoreVersion}";
+            var nanoServer = $"{si.SitecoreVersion}-nanoserver-${si.NanoServerVersion}";
+            si.PublicVariables = new Dictionary<string, string>
+            {
+                {"SqlDockerImage", $"{si.Registry}/sitecore-xp-sqldev:{windowsServerCore}"},
+                {"SolrDockerImage", $"{si.Registry}/sitecore-xp-solr:{nanoServer}"},
+                {"XConnectDockerImage", $"{si.Registry}/sitecore-xp-xconnect:{windowsServerCore}"},
+                {"XConnectAutomationEngineImage", $"{si.Registry}/sitecore-xp-xconnect-automationengine:{windowsServerCore}"},
+                {"XConnectIndexWorkerImage", $"{si.Registry}/sitecore-xp-xconnect-indexworker:{windowsServerCore}"},
+                {"XConnectProcessingEngineImage", $"{si.Registry}/sitecore-xp-xconnect-processingengine:{windowsServerCore}"},
+                {"CDImage", $"{si.Registry}/sitecore-xp-cd:{windowsServerCore}"},
+                {"CMImage", $"{si.Registry}/sitecore-xp-standalone:{windowsServerCore}"},
+                {"VisualStudio.RemoteDebugger", @"C:\Program Files\Microsoft Visual Studio 16.0\Common7\IDE\Remote Debugger"},
+            };
+        }
+
+        private void ResolveTemplate(SitecoreInitialise si)
+        {
             if (!string.IsNullOrEmpty(si.DockerComposeTemplatePath) && !string.IsNullOrEmpty(si.TopologyName))
             {
                 throw new MultipleDockerComposeTemplatesPassed();
@@ -49,46 +92,27 @@ namespace Dimmy.Sitecore.Plugin
             if (!string.IsNullOrEmpty(si.TopologyName))
             {
                 var topology = _topologies.Single(t => t.Name == si.TopologyName);
-                composeTemplate.Contents = topology.DockerComposeTemplate;
-                composeTemplate.FileName = topology.DockerComposeTemplateName;
+                var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var templateFile = Path.Join(assemblyPath, topology.DockerComposeTemplate);
+                si.DockerComposeTemplatePath = templateFile;
             }
             else
             {
                 throw new NoDockerComposeTemplatesPassed();
             }
+        }
 
+        private static async Task<string> CreatEncodedeSitecoreLicense(SitecoreInitialise si)
+        {
             var licenseStream = File.OpenRead(si.LicensePath);
             var licenseMemoryStream = new MemoryStream();
             var licenseGZipStream = new GZipStream(licenseMemoryStream, CompressionLevel.Optimal, false);
+
             await licenseStream.CopyToAsync(licenseGZipStream);
             licenseGZipStream.Close();
-            var sitecoreLicense = Convert.ToBase64String(licenseMemoryStream.ToArray());
 
-            si.PrivateVariables = new Dictionary<string, string>
-            {
-                {"Sitecore.SqlSaPassword", NonceService.Generate()},
-                {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
-                {"Sitecore.License", sitecoreLicense},
-                {"Sitecore.CMPort", "44001"},
-                {"Sitecore.CDPort", "44002"},
-                {"Sitecore.SqlPort", "44010"},
-                {"Sitecore.SolrPort", "44011"}
-            };
-            
-            si.PublicVariables = new Dictionary<string, string>
-            {
-                {"SqlDockerImage", $"{si.Registry}/sitecore-xp-sqldev:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"SolrDockerImage", $"{si.Registry}/sitecore-xp-solr:${si.SitecoreVersion}-nanoserver-${si.NanoServerVersion}"},
-                {"XConnectDockerImage", $"{si.Registry}/sitecore-xp-xconnect:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"XConnectAutomationEngineImage", $"{si.Registry}/sitecore-xp-xconnect-automationengine:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"XConnectIndexWorkerImage", $"{si.Registry}/sitecore-xp-xconnect-indexworker:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"XConnectProcessingEngineImage", $"{si.Registry}/sitecore-xp-xconnect-processingengine:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"CDImage", $"{si.Registry}/sitecore-xp-cd:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"CMImage", $"{si.Registry}/sitecore-xp-standalone:${si.SitecoreVersion}-windowsservercore-${si.WindowsServerCoreVersion}"},
-                {"VisualStudio.RemoteDebugger", @"C:\Program Files\Microsoft Visual Studio 16.0\Common7\IDE\Remote Debugger"},
-            };
-            
-            await InitialiseProjectCommandHandler.Handle(si);
+            var sitecoreLicense = Convert.ToBase64String(licenseMemoryStream.ToArray());
+            return sitecoreLicense;
         }
 
         private void GetUserInput(SitecoreInitialise sitecoreInitialise)

@@ -6,7 +6,6 @@ namespace Dimmy.Sitecore.Plugin.Topologies
     {
         string Name { get; }
         string DockerComposeTemplate { get; }
-        string DockerComposeTemplateName { get; }
         Dictionary<string, string> VariableDictionary { get; }
     }
 }

@@ -4,7 +4,6 @@ namespace Dimmy.Sitecore.Plugin
 {
     public class SitecoreInitialise : InitialiseProject
     {
-
         public string Registry{ get; set; }
         public string SitecoreVersion { get; set; } = "9.3.0";
         public string NanoServerVersion { get; set; } = "1809";
