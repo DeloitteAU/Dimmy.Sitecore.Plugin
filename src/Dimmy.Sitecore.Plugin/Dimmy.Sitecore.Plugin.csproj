@@ -34,7 +34,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Dimmy.Cli" Version="0.0.1" />
+	  <PackageReference Include="Dimmy.Cli" Version="0.0.2" />
 	</ItemGroup>
 
 </Project>
