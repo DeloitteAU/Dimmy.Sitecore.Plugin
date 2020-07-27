@@ -1,9 +1,0 @@
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\bin\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.deps.json
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\bin\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.dll
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\bin\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.pdb
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.csprojAssemblyReference.cache
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.AssemblyInfoInputs.cache
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.AssemblyInfo.cs
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.csproj.CoreCompileInputs.cache
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.dll
-C:\projects\Dimmy.Sitecore.Plugin\src\Dimmy.Sitecore.Plugin\obj\Debug\netstandard2.1\Dimmy.Sitecore.Plugin.pdb

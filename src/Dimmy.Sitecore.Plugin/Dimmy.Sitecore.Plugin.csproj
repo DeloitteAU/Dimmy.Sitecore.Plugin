@@ -10,6 +10,10 @@
 		<Version>0.0.5</Version>
 		<Authors>Aaron Job</Authors>
 		<Company>Deloitte Digital Asia Pacific</Company>
+		<PackageVersion>0.0.1</PackageVersion>
+		<Title>Dimmy.Sitecore.Plugin</Title>
+		<Copyright>https://github.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin</Copyright>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin/master/LICENSE</PackageLicenseUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
