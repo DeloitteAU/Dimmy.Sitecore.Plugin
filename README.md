@@ -46,6 +46,18 @@ Currently, this plugin only supports Sitecore 9.3; its aim, however, is to suppo
 
 No official road map yet but you can see what [enhancements](https://github.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin/labels/enhancement) may be on the way. If you wish to contribute, please, by all means, open a PR. Also goes for any bugs you may find open a new git issue.
 
+
+## Who is Deloitte Digital?
+
+**Part Business. Part Creative. Part Technology. One hundred per cent digital.**
+
+Pioneered in Australia, Deloitte Digital is committed to helping clients unlock the business value of emerging technologies. We provide clients with a full suite of digital services, covering digital strategy, user experience, content, creative, engineering and implementation across mobile, web and social media channels.
+
+[http://www.deloittedigital.com/au](http://www.deloittedigital.com/au)
+
+## LICENSE (BSD-3-Clause)
+[View License](LICENSE)
+
 ## 終わり
 
 This is not much more than a thought experiment currently, use at your own risk and thank you for taking the time to look at this project. 
