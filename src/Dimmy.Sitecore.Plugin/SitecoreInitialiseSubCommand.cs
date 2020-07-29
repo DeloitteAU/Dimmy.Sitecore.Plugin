@@ -16,7 +16,7 @@ using Dimmy.Sitecore.Plugin.Topologies;
 
 namespace Dimmy.Sitecore.Plugin
 {
-    public class SitecoreInitialiseSubCommand: InitialiseSubCommand
+    public class SitecoreInitialiseSubCommand : InitialiseSubCommand
     {
         private readonly IEnumerable<ITopology> _topologies;
 
@@ -56,7 +56,7 @@ namespace Dimmy.Sitecore.Plugin
             {
                 {"Sitecore.SqlSaPassword", NonceService.Generate()},
                 {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
-                {"Sitecore.License", await CreatEncodedeSitecoreLicense(si)},
+                {"Sitecore.License", await CreateEncodedSitecoreLicense(si)},
                 {"Sitecore.CMPort", "44001"},
                 {"Sitecore.CDPort", "44002"},
                 {"Sitecore.SqlPort", "44010"},
@@ -102,7 +102,7 @@ namespace Dimmy.Sitecore.Plugin
             }
         }
 
-        private static async Task<string> CreatEncodedeSitecoreLicense(SitecoreInitialise si)
+        private static async Task<string> CreateEncodedSitecoreLicense(SitecoreInitialise si)
         {
             await using var licenseStream = File.OpenRead(si.LicensePath);
             var licenseMemoryStream = new MemoryStream();

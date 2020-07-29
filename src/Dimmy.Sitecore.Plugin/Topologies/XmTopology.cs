@@ -1,7 +1,7 @@
 ﻿
 namespace Dimmy.Sitecore.Plugin.Topologies
 {
-    public class XmTopology:Topology
+    public class XmTopology : Topology
     {
         public override string Name => "xm";
 
