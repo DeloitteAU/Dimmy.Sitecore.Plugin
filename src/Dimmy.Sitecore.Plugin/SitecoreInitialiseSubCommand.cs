@@ -104,12 +104,10 @@ namespace Dimmy.Sitecore.Plugin
 
         private static async Task<string> CreatEncodedeSitecoreLicense(SitecoreInitialise si)
         {
-            var licenseStream = File.OpenRead(si.LicensePath);
+            await using var licenseStream = File.OpenRead(si.LicensePath);
             var licenseMemoryStream = new MemoryStream();
             var licenseGZipStream = new GZipStream(licenseMemoryStream, CompressionLevel.Optimal, false);
-
             await licenseStream.CopyToAsync(licenseGZipStream);
-            licenseGZipStream.Close();
 
             var sitecoreLicense = Convert.ToBase64String(licenseMemoryStream.ToArray());
             return sitecoreLicense;
