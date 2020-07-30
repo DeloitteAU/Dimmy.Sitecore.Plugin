@@ -7,7 +7,7 @@ Dimmy is a tool to help you with a docker based development workflow, and the Si
 ## Getting started
 
 To get started there are a few prerequisites:
-* Dimmy installed
+* [Dimmy](https://github.com/gravypower/Dimmy) installed
 * Docker
 * Docker Compose
 * A Sitecore Licence file
