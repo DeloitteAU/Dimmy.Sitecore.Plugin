@@ -7,7 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Dimmy.Cli.Commands.Project;
+using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Cli.Extensions;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
@@ -39,6 +39,7 @@ namespace Dimmy.Sitecore.Plugin
             command.AddOption(new Option<string>("--sitecore-version", "The Sitecore Version"));
             command.AddOption(new Option<string>("--nano-server-version"));
             command.AddOption(new Option<string>("--windows-server-core-version"));
+            command.AddOption(new Option<string>("--registry"));
         }
 
         private async Task DoInitialise(SitecoreInitialise si)
@@ -67,7 +68,7 @@ namespace Dimmy.Sitecore.Plugin
         private static void AddPublicVariables(SitecoreInitialise si)
         {
             var windowsServerCore = $"{si.SitecoreVersion}-windowsservercore-{si.WindowsServerCoreVersion}";
-            var nanoServer = $"{si.SitecoreVersion}-nanoserver-${si.NanoServerVersion}";
+            var nanoServer = $"{si.SitecoreVersion}-nanoserver-{si.NanoServerVersion}";
             si.PublicVariables = new Dictionary<string, string>
             {
                 {"SqlDockerImage", $"{si.Registry}/sitecore-xp-sqldev:{windowsServerCore}"},
