@@ -24,13 +24,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="TopologyTemplates\9.3.0\docker-compose.xp.template.yml">
+	  <Content Include="Versions\10.0.0\docker-compose.xm1.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Versions\9.3.0\docker-compose.xm.template.yml" />
+	  <Content Include="Versions\9.3.0\docker-compose.xp.template.yml" />
 	  <None Remove="TopologyTemplates\docker-compose.xp.template.yml" />
-	  <Content Include="TopologyTemplates\9.3.0\docker-compose.xm.template.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,6 +38,10 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Dimmy.Cli" Version="0.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Dimmy\src\Dimmy.Cli\Dimmy.Cli.csproj" />
 	</ItemGroup>
 
 </Project>
