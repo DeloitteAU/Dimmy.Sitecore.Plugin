@@ -7,7 +7,6 @@ namespace Dimmy.Sitecore.Plugin
     {
         public void Bootstrap(Container container)
         {
-            
         }
     }
 }

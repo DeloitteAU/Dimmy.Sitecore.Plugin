@@ -9,5 +9,7 @@ namespace Dimmy.Sitecore.Plugin
         public string Registry { get; set; }
         
         public string Topology { get; set; }
+        
+        public string WindowsVersion { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -73,14 +72,12 @@ namespace Dimmy.Sitecore.Plugin
             return sitecoreLicense;
         }
         
-        protected string CreateEncodedCertificate(string password)
+        protected X509Certificate2 CreateCertificate(string certificateName, string dnsName)
         {
-            const string certificateName = "dimmy.sitecore.plugin";
-            
             var sanBuilder = new SubjectAlternativeNameBuilder();
             sanBuilder.AddIpAddress(IPAddress.Loopback);
             sanBuilder.AddIpAddress(IPAddress.IPv6Loopback);
-            sanBuilder.AddDnsName("localhost");
+            sanBuilder.AddDnsName(dnsName);
             sanBuilder.AddDnsName(Environment.MachineName);
 
             var distinguishedName = new X500DistinguishedName($"CN={certificateName}");
@@ -102,13 +99,12 @@ namespace Dimmy.Sitecore.Plugin
             request.CertificateExtensions.Add(sanBuilder.Build());
 
             var certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)),
-                new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
+                new DateTimeOffset(DateTime.UtcNow.AddYears(10)));
             certificate.FriendlyName = certificateName;
 
-            var x509Certificate2Export = certificate.Export(X509ContentType.Pfx, password);
-            var x509Certificate2Base64String = Convert.ToBase64String(x509Certificate2Export);
+            return certificate;
 
-            return x509Certificate2Base64String;
+
         }
     }
 }

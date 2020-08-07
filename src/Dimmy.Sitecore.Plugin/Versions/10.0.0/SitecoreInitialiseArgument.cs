@@ -18,6 +18,7 @@
         {
             Registry = "scr.sitecore.com/sxp";
             Topology = "xm1";
+            WindowsVersion = "1909";
         }
     }
 }

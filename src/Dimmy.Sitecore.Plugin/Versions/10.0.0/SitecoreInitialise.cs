@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
@@ -40,7 +41,13 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
         private async Task DoInitialise(SitecoreInitialiseArgument arg)
         {
             var identityCertificatePassword = NonceService.Generate();
-            arg.PrivateVariables = new Dictionary<string, string>
+
+            var certificate = CreateCertificate("dimmy.sitecore.plugin", "localhost");
+                
+             var x509Certificate2Export = certificate.Export(X509ContentType.Pfx, identityCertificatePassword);
+             var x509Certificate2Base64String = Convert.ToBase64String(x509Certificate2Export);
+
+             arg.PrivateVariables = new Dictionary<string, string>
             {
                 {"MsSql.SaPassword", NonceService.Generate()},
                 {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
@@ -48,9 +55,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Sitecore.License", CreateEncodedSitecoreLicense(arg)},
                 {"Sitecore.Id.Secret", NonceService.Generate()},
                 {"Sitecore.Id.CertificatePassword", identityCertificatePassword},
-                {"Sitecore.Id.Certificate", CreateEncodedCertificate(identityCertificatePassword)},
-                {"Sitecore.SqlPort", "44010"},
-                {"Sitecore.SolrPort", "44011"}
+                {"Sitecore.Id.Certificate", x509Certificate2Base64String},
             };
             
             arg.PublicVariables = new Dictionary<string, string>
@@ -58,30 +63,29 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Traefik.Image", arg.TraefikIImage},
                 {"Traefik.Isolation", arg.TraefikIsolation},
                 
-                {"Redis.Image", $"{arg.Registry}/sitecore-redis:10.0.0-1909"},
+                {"Redis.Image", $"{arg.Registry}/sitecore-redis:10.0.0-{arg.WindowsVersion}"},
                 {"Redis.Isolation", arg.RedisIsolation},
                 
-                {"MsSql.Image", $"{arg.Registry}/sitecore-xm1-mssql:10.0.0-1909"},
+                {"MsSql.Image", $"{arg.Registry}/sitecore-{arg.Topology}-mssql:10.0.0-{arg.WindowsVersion}"},
                 {"MsSql.Isolation", arg.MssqlIsolation},
                 
-                {"Solr.Image", $"{arg.Registry}/sitecore-xm1-solr:10.0.0-1909"},
+                {"Solr.Image", $"{arg.Registry}/sitecore-{arg.Topology}-solr:10.0.0-{arg.WindowsVersion}"},
                 {"Solr.Isolation", arg.SolrIsolation},
                 
-                {"Sitecore.Id.Image", $"{arg.Registry}/sitecore-id:10.0.0-1909"},
+                {"Sitecore.Id.Image", $"{arg.Registry}/sitecore-id:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.Id.HostName", arg.IdHostName},
                 {"Sitecore.Id.Isolation", arg.IdIsolation},
                 
-                {"Sitecore.Cd.Image", $"{arg.Registry}/sitecore-xm1-cd:10.0.0-1909"},
+                {"Sitecore.Cd.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cd:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.Cd.HostName", arg.CdHostName},
                 {"Sitecore.Cd.Isolation", arg.CdIsolation},
                 
-                {"Sitecore.Cm.Image", $"{arg.Registry}/sitecore-xm1-cm:10.0.0-1909"},
+                {"Sitecore.Cm.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cm:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.Cm.HostName", arg.CmHostName},
                 {"Sitecore.Cm.Isolation", arg.CmIsolation},
             };
             
-            var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var templateFile = Path.Join(assemblyPath, "Versions/10.0.0/docker-compose.xm1.template.yml");
+            var templateFile = Path.Join(TemplatePath, $"{arg.Topology}.docker-compose.template.yml");
             
             arg.DockerComposeTemplatePath = templateFile;
             
