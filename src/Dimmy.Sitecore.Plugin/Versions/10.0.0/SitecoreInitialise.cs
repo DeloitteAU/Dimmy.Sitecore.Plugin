@@ -10,27 +10,32 @@ using Dimmy.Engine.Services;
 
 namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
 {
-    public class SitecoreInitialise : SitecoreInitialiseVersion<SitecoreInitialiseArgument>
+    public class SitecoreInitialise : SitecoreInitialiseBase<SitecoreInitialiseArgument>
     {
-        public override string Name => "10.0.0";
+        public override string Name => "sitecore-10.0.0";
         public override string Description => "Initialise a Sitecore 10.0.0 project.";
-        public override Sitecore.Plugin.SitecoreInitialiseArgument HydrateCommand(Command command)
+
+        protected override string Version => "10.0.0";
+
+        public SitecoreInitialise(ICommandHandler<InitialiseProject> initialiseProjectCommandHandler) : base(
+            initialiseProjectCommandHandler)
         {
-            var sitecoreInitialiseArgument = new SitecoreInitialiseArgument();
-            command.AddOption(new Option<string>("--cd-host-name", $"the host name fo the CD server. Defaults to {sitecoreInitialiseArgument.CdHostName}"));
-            command.AddOption(new Option<string>("--cm-host-name", $"the host name fo the CM server. Defaults to {sitecoreInitialiseArgument.CmHostName}"));
-            command.AddOption(new Option<string>("--id-host-name", $"the host name fo the CD server. Defaults to {sitecoreInitialiseArgument.IdHostName}"));
+        }
+
+        protected override void DoHydrateCommand(Command command, SitecoreInitialiseArgument arg)
+        {
+            command.AddOption(new Option<string>("--cd-host-name", $"the host name fo the CD server. Defaults to {arg.CdHostName}"));
+            command.AddOption(new Option<string>("--cm-host-name", $"the host name fo the CM server. Defaults to {arg.CmHostName}"));
+            command.AddOption(new Option<string>("--id-host-name", $"the host name fo the CD server. Defaults to {arg.IdHostName}"));
             
-            command.AddOption(new Option<string>("--traefik-isolation", $"the docker isolation for traefik. Defaults to {sitecoreInitialiseArgument.TraefikIsolation}"));
-            command.AddOption(new Option<string>("--traefik-image", $"the docker isolation for traefik. Defaults to {sitecoreInitialiseArgument.TraefikIImage}"));
+            command.AddOption(new Option<string>("--traefik-isolation", $"the docker isolation for traefik. Defaults to {arg.TraefikIsolation}"));
+            command.AddOption(new Option<string>("--traefik-image", $"the docker isolation for traefik. Defaults to {arg.TraefikIImage}"));
             
-            command.AddOption(new Option<string>("--redis-isolation", $"the docker isolation for redis. Defaults to {sitecoreInitialiseArgument.RedisIsolation}"));
-            command.AddOption(new Option<string>("--mssql-isolation", $"the docker isolation for MsSql. Defaults to {sitecoreInitialiseArgument.MssqlIsolation}"));
-            command.AddOption(new Option<string>("--solr-isolation", $"the docker isolation for Solr. Defaults to {sitecoreInitialiseArgument.SolrIsolation}"));
+            command.AddOption(new Option<string>("--redis-isolation", $"the docker isolation for redis. Defaults to {arg.RedisIsolation}"));
+            command.AddOption(new Option<string>("--mssql-isolation", $"the docker isolation for MsSql. Defaults to {arg.MssqlIsolation}"));
+            command.AddOption(new Option<string>("--solr-isolation", $"the docker isolation for Solr. Defaults to {arg.SolrIsolation}"));
             
             command.Handler = CommandHandler.Create((SitecoreInitialiseArgument arg) => DoInitialise(arg));
-
-            return sitecoreInitialiseArgument;
         }
         private async Task DoInitialise(SitecoreInitialiseArgument arg)
         {
@@ -81,10 +86,6 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
             arg.DockerComposeTemplatePath = templateFile;
             
             await InitialiseProjectCommandHandler.Handle(arg);
-        }
-
-        public SitecoreInitialise(ICommandHandler<InitialiseProject> initialiseProjectCommandHandler) : base(initialiseProjectCommandHandler)
-        {
         }
     }
 }

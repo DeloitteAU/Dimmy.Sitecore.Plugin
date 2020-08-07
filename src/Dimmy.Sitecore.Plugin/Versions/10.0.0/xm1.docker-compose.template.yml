@@ -29,9 +29,21 @@ services:
         condition: service_healthy
       cm:
         condition: service_healthy
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "traefik"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   redis:
     isolation: #{Redis.Isolation}
     image: #{Redis.Image}
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "redis"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   mssql:
     isolation: #{MsSql.Isolation}
     image: #{MsSql.Image}
@@ -45,6 +57,12 @@ services:
       - type: bind
         source: .\mssql-data
         target: c:\data
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "mssql"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   solr:
     isolation: #{Solr.Isolation}
     ports:
@@ -54,6 +72,12 @@ services:
       - type: bind
         source: .\solr-data
         target: c:\data
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "solr"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   id:
     isolation: #{Sitecore.Id.Isolation}
     image: #{Sitecore.Id.Image}
@@ -75,8 +99,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.id-secure.entrypoints=websecure"
-      - "traefik.http.routers.id-secure.rule=Host(`#{Sitecore.Id.HostName}`)"
+      - "traefik.http.routers.id-secure.rule=Host(#{Sitecore.Id.HostName})"
       - "traefik.http.routers.id-secure.tls=true"
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=#{Project.Name}"
+      - "dimmy.dev.project.id=#{Project.Id}"
+      - "dimmy.dev.project.role=id"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cd:
     isolation: #{Sitecore.Cd.Isolation}
     image: #{Sitecore.Cd.Image}
@@ -101,7 +130,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cd.entrypoints=web"
-      - "traefik.http.routers.cd.rule=Host(`#{Sitecore.Cd.HostName}`)"
+      - "traefik.http.routers.cd.rule=Host(#{Sitecore.Cd.HostName})"
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=#{Project.Name}"
+      - "dimmy.dev.project.id=#{Project.Id}"
+      - "dimmy.dev.project.role=cd"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cm:
     isolation: #{Sitecore.Cm.Isolation}
     image: #{Sitecore.Cm.Image}
@@ -137,6 +171,11 @@ services:
       - "traefik.http.middlewares.force-STS-Header.headers.forceSTSHeader=true"
       - "traefik.http.middlewares.force-STS-Header.headers.stsSeconds=31536000"
       - "traefik.http.routers.cm-secure.entrypoints=websecure"
-      - "traefik.http.routers.cm-secure.rule=Host(`#{Sitecore.Cm.HostName}`)"
+      - "traefik.http.routers.cm-secure.rule=Host(#{Sitecore.Cm.HostName})"
       - "traefik.http.routers.cm-secure.tls=true"
       - "traefik.http.routers.cm-secure.middlewares=force-STS-Header"
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=#{Project.Name}"
+      - "dimmy.dev.project.id=#{Project.Id}"
+      - "dimmy.dev.project.role=cm"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"

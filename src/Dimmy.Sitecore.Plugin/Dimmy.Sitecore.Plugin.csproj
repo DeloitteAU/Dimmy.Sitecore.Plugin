@@ -24,11 +24,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Versions\10.0.0\docker-compose.xm1.template.yml">
+	  <Content Include="Versions\10.0.0\xm1.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Versions\9.3.0\docker-compose.xm.template.yml" />
-	  <Content Include="Versions\9.3.0\docker-compose.xp.template.yml" />
+	  <Content Include="Versions\10.0.0\xp0.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Versions\10.0.0\xp1.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Versions\9.3.0\xm.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Versions\9.3.0\xp.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <None Remove="TopologyTemplates\docker-compose.xp.template.yml" />
 	</ItemGroup>
 
