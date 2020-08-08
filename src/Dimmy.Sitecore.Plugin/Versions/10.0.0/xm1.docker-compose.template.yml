@@ -64,10 +64,10 @@ services:
       dimmy.dev.project.role: "mssql"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   solr:
+    image: #{Solr.Image}
     isolation: #{Solr.Isolation}
     ports:
       - "8984:8983"
-    image: #{Solr.Image}
     volumes:
       - type: bind
         source: .\solr-data

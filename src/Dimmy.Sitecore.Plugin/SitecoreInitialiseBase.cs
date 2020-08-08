@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
+using Dimmy.Engine.Services;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
@@ -54,6 +55,17 @@ namespace Dimmy.Sitecore.Plugin
             command.AddOption(new Option<string>("--license-path", "Path to the Sitecore License"));
             command.AddOption(new Option<string>("--registry", $"Defaults to {arg.Registry}"));
             command.AddOption(new Option<string>("--topology", $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));
+
+
+            arg.PrivateVariables = new Dictionary<string, string>
+            {
+                {"MsSql.SaPassword", NonceService.Generate()},
+                {"Sitecore.License", CreateEncodedSitecoreLicense(arg)},
+                {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
+            };
+            
+            arg.PublicVariables = new Dictionary<string, string>();
+            
             DoHydrateCommand(command, arg);
         }
 
@@ -103,8 +115,6 @@ namespace Dimmy.Sitecore.Plugin
             certificate.FriendlyName = certificateName;
 
             return certificate;
-
-
         }
     }
 }

@@ -51,6 +51,7 @@ services:
       SA_PASSWORD: #{MsSql.SaPassword}
       SITECORE_ADMIN_PASSWORD: #{Sitecore.AdminPassword}
       ACCEPT_EULA: "Y"
+      SQL_SERVER: mssql
     ports:
       - "14330:1433"
     volumes:
@@ -64,10 +65,10 @@ services:
       dimmy.dev.project.role: "mssql"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   solr:
+    image: #{Solr.Image}
     isolation: #{Solr.Isolation}
     ports:
       - "8984:8983"
-    image: #{Solr.Image}
     volumes:
       - type: bind
         source: .\solr-data
@@ -99,7 +100,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.id-secure.entrypoints=websecure"
-      - "traefik.http.routers.id-secure.rule=Host(#{Sitecore.Id.HostName})"
+      - "traefik.http.routers.id-secure.rule=Host(`#{Sitecore.Id.HostName}`)"
       - "traefik.http.routers.id-secure.tls=true"
       - "dimmy.dev.project=true"
       - "dimmy.dev.project.name=#{Project.Name}"
@@ -116,12 +117,26 @@ services:
         condition: service_started
       redis:
         condition: service_started
+      xdbcollection:
+        condition: service_started
+      xdbautomation:
+        condition: service_started
+      xdbautomationrpt:
+        condition: service_started
+      xdbrefdata:
+        condition: service_started
     environment:
       Sitecore_AppSettings_instanceNameMode:define: default
       Sitecore_ConnectionStrings_Security: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_Web: Data Source=mssql;Initial Catalog=Sitecore.Web;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_ExperienceForms: Data Source=mssql;Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Exm.Master: Data Source=mssql;Initial Catalog=Sitecore.Exm.master;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_Solr.Search: http://solr:8983/solr
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_ConnectionStrings_Xdb.MarketingAutomation.Operations.Client: http://xdbautomation
+      Sitecore_ConnectionStrings_Xdb.MarketingAutomation.Reporting.Client: http://xdbautomationrpt
+      Sitecore_ConnectionStrings_Xdb.ReferenceData.Client: http://xdbrefdata
       Sitecore_ConnectionStrings_Redis.Sessions: redis:6379,ssl=False,abortConnect=False
       Sitecore_License: #{Sitecore.License}
     healthcheck:
@@ -130,7 +145,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cd.entrypoints=web"
-      - "traefik.http.routers.cd.rule=Host(#{Sitecore.Cd.HostName})"
+      - "traefik.http.routers.cd.rule=Host(`#{Sitecore.Cd.HostName}`)"
       - "dimmy.dev.project=true"
       - "dimmy.dev.project.name=#{Project.Name}"
       - "dimmy.dev.project.id=#{Project.Id}"
@@ -140,11 +155,19 @@ services:
     isolation: #{Sitecore.Cm.Isolation}
     image: #{Sitecore.Cm.Image}
     depends_on:
-      mssql:
-        condition: service_healthy
-      solr:
-        condition: service_started
       id:
+        condition: service_started
+      cortexreporting:
+        condition: service_started
+      xdbcollection:
+        condition: service_started
+      xdbsearch:
+        condition: service_started
+      xdbautomation:
+        condition: service_started
+      xdbautomationrpt:
+        condition: service_started
+      xdbrefdata:
         condition: service_started
     environment:
       Sitecore_AppSettings_instanceNameMode:define: default
@@ -152,16 +175,30 @@ services:
       Sitecore_ConnectionStrings_Security: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_Master: Data Source=mssql;Initial Catalog=Sitecore.Master;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_Web: Data Source=mssql;Initial Catalog=Sitecore.Web;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting.ApiKey: #{Sitecore.Rep.ApiKey}
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_ConnectionStrings_ExperienceForms: Data Source=mssql;Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Exm.Master: Data Source=mssql;Initial Catalog=Sitecore.Exm.master;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting: Data Source=mssql;Initial Catalog=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Sitecore.Reporting.Client: http://cortexreporting
       Sitecore_ConnectionStrings_Solr.Search: http://solr:8983/solr
-      Sitecore_ConnectionStrings_Sitecoreidentity.secret: #{Sitecore.Id.Secret}
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_ConnectionStrings_XConnect.Search: http://xdbsearch
+      Sitecore_ConnectionStrings_Xdb.MarketingAutomation.Operations.Client: http://xdbautomation
+      Sitecore_ConnectionStrings_Xdb.MarketingAutomation.Reporting.Client: http://xdbautomationrpt
+      Sitecore_ConnectionStrings_Xdb.ReferenceData.Client: http://xdbrefdata
+      Sitecore_Reporting_Service_Url: http://rep
+      Sitecore_Processing_Service_Url: http://prc
+      Sitecore_Reporting_Service_Require_Https: 'false'
+      Sitecore_Processing_Service_Require_Https: 'false'
       Sitecore_AppSettings_Telerik.AsyncUpload.ConfigurationEncryptionKey: #{Sitecore.TelerikEncryptionKey}
       Sitecore_AppSettings_Telerik.Upload.ConfigurationHashKey: #{Sitecore.TelerikEncryptionKey}
       Sitecore_AppSettings_Telerik.Web.UI.DialogParametersEncryptionKey: #{Sitecore.TelerikEncryptionKey}
       Sitecore_License: #{Sitecore.License}
       Sitecore_Identity_Server_Authority: https://#{Sitecore.Id.HostName}
       Sitecore_Identity_Server_InternalAuthority: http://id
-      Sitecore_Identity_Server_CallbackAuthority: https://#{Sitecore.Cm.HostName}
+      Sitecore_Identity_Server_CallbackAuthority: https://#{Sitecore.Id.HostName}
       Sitecore_Identity_Server_Require_Https: "false"
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
@@ -171,11 +208,288 @@ services:
       - "traefik.http.middlewares.force-STS-Header.headers.forceSTSHeader=true"
       - "traefik.http.middlewares.force-STS-Header.headers.stsSeconds=31536000"
       - "traefik.http.routers.cm-secure.entrypoints=websecure"
-      - "traefik.http.routers.cm-secure.rule=Host(#{Sitecore.Cm.HostName})"
+      - "traefik.http.routers.cm-secure.rule=Host(`#{Sitecore.Id.HostName}`)"
       - "traefik.http.routers.cm-secure.tls=true"
       - "traefik.http.routers.cm-secure.middlewares=force-STS-Header"
       - "dimmy.dev.project=true"
       - "dimmy.dev.project.name=#{Project.Name}"
       - "dimmy.dev.project.id=#{Project.Id}"
       - "dimmy.dev.project.role=cm"
-      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}" 
+  prc:
+    isolation: #{Sitecore.Prc.Isolation}
+    image: #{Sitecore.Prc.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+      xdbcollection:
+        condition: service_started
+    environment:
+      Sitecore_AppSettings_instanceNameMode:define: default
+      Sitecore_ConnectionStrings_Core: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Security: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Master: Data Source=mssql;Initial Catalog=Sitecore.Master;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting.ApiKey: #{Sitecore.Rep.ApiKey}
+      Sitecore_ConnectionStrings_Xdb.Processing.Pools: Data Source=mssql;Initial Catalog=Sitecore.Processing.pools;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Processing.Tasks: Data Source=mssql;Initial Catalog=Sitecore.Processing.tasks;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting: Data Source=mssql;Initial Catalog=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "prc"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  rep:
+    isolation: #{Sitecore.Rep.Isolation}
+    image: #{Sitecore.Rep.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_AppSettings_instanceNameMode:define: default
+      Sitecore_ConnectionStrings_Core: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Security: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Master: Data Source=mssql;Initial Catalog=Sitecore.Master;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting.ApiKey: #{Sitecore.Rep.ApiKey}
+      Sitecore_ConnectionStrings_Reporting: Data Source=mssql;Initial Catalog=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "rep"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbcollection:
+    isolation: #{Sitecore.XDBCollection.Isolation}
+    image: #{Sitecore.XDBCollection.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Marketingautomation: Data Source=mssql;Initial Catalog=Sitecore.Marketingautomation;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Processing.Pools: Data Source=mssql;Initial Catalog=Sitecore.Processing.pools;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Collection: Data Source=mssql;Initial Catalog=Sitecore.Xdb.Collection.ShardMapManager;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbcollection"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbsearch:
+    isolation: #{Sitecore.XDBSearch.Isolation}
+    image: #{Sitecore.XDBSearch.Image}
+    depends_on:
+      xdbcollection:
+        condition: service_healthy
+      solr:
+        condition: service_started
+    environment:
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Marketingautomation: Data Source=mssql;Initial Catalog=Sitecore.Marketingautomation;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Processing.Pools: Data Source=mssql;Initial Catalog=Sitecore.Processing.pools;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Collection: Data Source=mssql;Initial Catalog=Sitecore.Xdb.Collection.ShardMapManager;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_SolrCore: http://solr:8983/solr/sitecore_xdb
+      Sitecore_License: #{Sitecore.License}
+      Sitecore_Sitecore:XConnect:CollectionSearch:Services:Solr.SolrReaderSettings:Options:RequireHttps: 'false'
+      Sitecore_Sitecore:XConnect:CollectionSearch:Services:XConnectSolrHealthCheckServicesConfiguration:Options:RequireHttps: 'false'
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbsearch"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbautomation:
+    isolation: #{Sitecore.XDBAutomation.Isolation}
+    image: #{Sitecore.XDBAutomation.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+      xdbcollection:
+        condition: service_started
+      xdbsearch:
+        condition: service_started
+    environment:
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Marketingautomation: Data Source=mssql;Initial Catalog=Sitecore.Marketingautomation;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_ConnectionStrings_XConnect.Search: http://xdbsearch
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbautomation"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbautomationrpt:
+    isolation: #{Sitecore.XDBAutomationRpt.Isolation}
+    image: #{Sitecore.XDBAutomationRpt.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_ConnectionStrings_Xdb.Marketingautomation: Data Source=mssql;Initial Catalog=Sitecore.Marketingautomation;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbautomationrpt"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  cortexprocessing:
+    isolation: #{Sitecore.CortexProcessing.Isolation}
+    image: #{Sitecore.CortexProcessing.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_ConnectionStrings_Processing.Engine.Storage: Data Source=mssql;Initial Catalog=Sitecore.Processing.Engine.Storage;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "cortexprocessing"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  cortexreporting:
+    isolation: #{Sitecore.CortexReporting.Isolation}
+    image: #{Sitecore.CortexReporting.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_ConnectionStrings_Reporting: Data Source=mssql;Initial Catalog=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "cortexreporting"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbrefdata:
+    isolation: #{Sitecore.XBDRefData.Isolation}
+    image: #{Sitecore.XBDRefData.Image}
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbrefdata"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbsearchworker:
+    isolation: #{Sitecore.XDBSearchWorker.Isolation}
+    image: #{Sitecore.XDBSearchWorker.Image}
+    depends_on:
+      xdbsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      Sitecore_ConnectionStrings_Collection: Data Source=mssql;Initial Catalog=Sitecore.Xdb.Collection.ShardMapManager;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_SolrCore: http://solr:8983/solr/sitecore_xdb
+      Sitecore_License: #{Sitecore.License}
+      Sitecore_Sitecore:XConnect:SearchIndexer:Services:Solr.SolrReaderSettings:Options:RequireHttps: 'false'
+      Sitecore_Sitecore:XConnect:SearchIndexer:Services:Solr.SolrWriterSettings:Options:RequireHttps: 'false'
+      Sitecore_Sitecore:XConnect:CollectionSearch:Services:XConnectSolrHealthCheckServicesConfiguration:Options:RequireHttps: 'false'
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1 -Port 8080"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbsearchworker"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  xdbautomationworker:
+    isolation: #{Sitecore.XDBAutomationWorker.Isolation}
+    image: #{Sitecore.XDBAutomationWorker.Image}
+    depends_on:
+      xdbcollection:
+        condition: service_healthy
+      xdbsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_ConnectionStrings_XConnect.Search: http://xdbsearch
+      Sitecore_ConnectionStrings_Xdb.Marketingautomation: Data Source=mssql;Initial Catalog=Sitecore.Marketingautomation;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Xdb.Referencedata: Data Source=mssql;Initial Catalog=Sitecore.Referencedata;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1 -Port 8080"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "xdbautomationworker"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+  cortexprocessingworker:
+    isolation: #{Sitecore.CortexProcessingWorker.Isolation}
+    image: #{Sitecore.CortexProcessingWorker.Image}
+    depends_on:
+      cortexprocessing:
+        condition: service_healthy
+      xdbcollection:
+        condition: service_healthy
+      xdbsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      Sitecore_ConnectionStrings_Processing.Engine.Storage: Data Source=mssql;Initial Catalog=Sitecore.Processing.Engine.Storage;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Processing.Engine.Tasks: Data Source=mssql;Initial Catalog=Sitecore.Processing.Engine.Tasks;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Processing.Webapi.Blob: http://cortexprocessing
+      Sitecore_ConnectionStrings_Processing.Webapi.Table: http://cortexprocessing
+      Sitecore_ConnectionStrings_XConnect.Collection: http://xdbcollection
+      Sitecore_ConnectionStrings_XConnect.Configuration: http://xdbcollection
+      Sitecore_ConnectionStrings_XConnect.Search: http://xdbsearch
+      Sitecore_ConnectionStrings_Messaging: Data Source=mssql;Initial Catalog=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_ConnectionStrings_Reporting: Data Source=mssql;Initial Catalog=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
+      Sitecore_License: #{Sitecore.License}
+    healthcheck:
+      test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1 -Port 8080"]
+      timeout: 300s
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "cortexprocessingworker"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"

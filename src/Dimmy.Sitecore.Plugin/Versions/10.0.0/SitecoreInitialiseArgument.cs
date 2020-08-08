@@ -13,6 +13,19 @@
         public string RedisIsolation { get; set; } = "default";
         public string MssqlIsolation { get; set; } = "default";
         public string SolrIsolation { get; set; } = "default";
+        public string XConnectIsolation { get; set; } = "default";
+        public string PrcIsolation { get; set; } = "default";
+        public string RepIsolation { get; set; } = "default";
+        public string XDBCollectionIsolation { get; set; } = "default";
+        public string XDBSearchIsolation { get; set; } = "default";
+        public string XDBAutomationIsolation { get; set; } = "default";
+        public string XDBAutomationRptIsolation { get; set; } = "default";
+        public string CortexProcessingIsolation { get; set; } = "default";
+        public string CortexReportingIsolation { get; set; } = "default";
+        public string XBDRefDataIsolation { get; set; } = "default";
+        public string XDBSearchWorkerIsolation { get; set; } = "default";
+        public string XDBAutomationWorkerIsolation { get; set; } = "default";
+        public string CortexProcessingWorkerIsolation { get; set; } = "default";
 
         public SitecoreInitialiseArgument()
         {
