@@ -1,5 +1,4 @@
 ﻿using Dimmy.Cli;
-using Dimmy.Sitecore.Plugin.Topologies;
 using SimpleInjector;
 
 namespace Dimmy.Sitecore.Plugin
@@ -8,7 +7,6 @@ namespace Dimmy.Sitecore.Plugin
     {
         public void Bootstrap(Container container)
         {
-            container.Collection.Register<ITopology>(GetType().Assembly);
         }
     }
 }
