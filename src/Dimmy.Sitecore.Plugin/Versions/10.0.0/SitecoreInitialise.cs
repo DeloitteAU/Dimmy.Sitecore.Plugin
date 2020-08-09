@@ -50,11 +50,8 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
             command.AddOption(new Option<string>("--xdb-search-worker-isolation", $"the docker isolation for xDB Search Worker. Defaults to {arg.XDBSearchWorkerIsolation}"));
             command.AddOption(new Option<string>("--xdb-automation-worker-isolation", $"the docker isolation for xDB Automation Worker. Defaults to {arg.XDBAutomationWorkerIsolation}"));
             command.AddOption(new Option<string>("--cortex-processing-worker-isolation", $"the docker isolation for Cortex Processing Worker. Defaults to {arg.CortexProcessingWorkerIsolation}"));
-
-
-            command.Handler = CommandHandler.Create((SitecoreInitialiseArgument arg) => DoInitialise(arg));
         }
-        private async Task DoInitialise(SitecoreInitialiseArgument arg)
+        protected override void DoInitialise(SitecoreInitialiseArgument arg)
         {
             var identityCertificatePassword = NonceService.Generate();
 
@@ -143,7 +140,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
             
             arg.DockerComposeTemplatePath = templateFile;
             
-            await InitialiseProjectCommandHandler.Handle(arg);
+            InitialiseProjectCommandHandler.Handle(arg);
         }
     }
 }

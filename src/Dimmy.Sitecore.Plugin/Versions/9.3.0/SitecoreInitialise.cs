@@ -18,6 +18,10 @@ namespace Dimmy.Sitecore.Plugin.Versions._9._3._0
         }
         protected override void DoHydrateCommand(Command command, SitecoreInitialiseArgument arg)
         {
+        }
+
+        protected override void DoInitialise(SitecoreInitialiseArgument arg)
+        {
             arg.PrivateVariables.AddRange(new Dictionary<string, string>
             {
                 {"Sitecore.CM.Port", "44001"},

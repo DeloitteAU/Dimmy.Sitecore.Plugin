@@ -10,13 +10,15 @@
 		<Version>0.0.5</Version>
 		<Authors>Aaron Job</Authors>
 		<Company>Deloitte Digital Asia Pacific</Company>
-		<PackageVersion>0.0.2</PackageVersion>
+		<PackageVersion>1.0.0</PackageVersion>
 		<Title>Dimmy.Sitecore.Plugin</Title>
 		<Copyright>Deloitte Digital</Copyright>
 		<PackageLicenseUrl>https://raw.githubusercontent.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin/master/LICENSE</PackageLicenseUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin/master/Dimmy.Sitecore.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/DeloitteDigitalAPAC/Dimmy.Sitecore.Plugin</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+		<Description>Dimmy is a tool to help you with a docker based development workflow, and the Sitecore plugin helps you do this when building Sitecore Applications.</Description>
+		<PackageReleaseNotes>Added support for Sitecore 10</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
