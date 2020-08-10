@@ -74,6 +74,8 @@ namespace Dimmy.Sitecore.Plugin
                 {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
             });
             
+            arg.MetaData.Add("SitecoreVersion", Version);
+            
             DoInitialise(arg);
         }
 
