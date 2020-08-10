@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
 using Dimmy.Engine.Services;
@@ -14,14 +12,18 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
 {
     public class SitecoreInitialise : SitecoreInitialiseBase<SitecoreInitialiseArgument>
     {
+        private readonly ICertificateService _certificateService;
         public override string Name => "sitecore-10.0.0";
         public override string Description => "Initialise a Sitecore 10.0.0 project.";
 
         protected override string Version => "10.0.0";
 
-        public SitecoreInitialise(ICommandHandler<InitialiseProject> initialiseProjectCommandHandler) : base(
+        public SitecoreInitialise(
+            ICertificateService certificateService,
+            ICommandHandler<InitialiseProject> initialiseProjectCommandHandler) : base(
             initialiseProjectCommandHandler)
         {
+            _certificateService = certificateService;
         }
 
         protected override void DoHydrateCommand(Command command, SitecoreInitialiseArgument arg)
@@ -55,7 +57,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
         {
             var identityCertificatePassword = NonceService.Generate();
 
-            var certificate = CreateCertificate("dimmy.sitecore.plugin", "localhost");
+            var certificate = _certificateService.CreateCertificate("dimmy.sitecore.plugin", "localhost");
                 
              var x509Certificate2Export = certificate.Export(X509ContentType.Pfx, identityCertificatePassword);
              var x509Certificate2Base64String = Convert.ToBase64String(x509Certificate2Export);
@@ -84,15 +86,15 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Solr.Isolation", arg.SolrIsolation},
                 
                 {"Sitecore.Id.Image", $"{arg.Registry}/sitecore-id:10.0.0-{arg.WindowsVersion}"},
-                {"Sitecore.Id.HostName", arg.IdHostName},
+                {Constants.IdHostName, arg.IdHostName},
                 {"Sitecore.Id.Isolation", arg.IdIsolation},
                 
                 {"Sitecore.Cd.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cd:10.0.0-{arg.WindowsVersion}"},
-                {"Sitecore.Cd.HostName", arg.CdHostName},
+                {Constants.CdHostName, arg.CdHostName},
                 {"Sitecore.Cd.Isolation", arg.CdIsolation},
                 
                 {"Sitecore.Cm.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cm:10.0.0-{arg.WindowsVersion}"},
-                {"Sitecore.Cm.HostName", arg.CmHostName},
+                {Constants.CmHostName, arg.CmHostName},
                 {"Sitecore.Cm.Isolation", arg.CmIsolation},
                 
                 {"Sitecore.Prc.Image", $"{arg.Registry}/sitecore-{arg.Topology}-prc:10.0.0-{arg.WindowsVersion}"},
