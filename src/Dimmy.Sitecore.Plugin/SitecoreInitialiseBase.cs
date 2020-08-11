@@ -60,7 +60,7 @@ namespace Dimmy.Sitecore.Plugin
             
             arg.PrivateVariables = new Dictionary<string, string>();
             arg.PublicVariables = new Dictionary<string, string>();
-            
+
             DoHydrateCommand(command, arg);
             command.Handler = CommandHandler.Create((TArg arg) => Initialise(arg));
         }
@@ -75,6 +75,7 @@ namespace Dimmy.Sitecore.Plugin
             });
             
             arg.MetaData.Add("SitecoreVersion", Version);
+            arg.MetaData.Add(Constants.MetaData.SitecoreTopology, arg.Topology);
             
             DoInitialise(arg);
         }
@@ -82,7 +83,6 @@ namespace Dimmy.Sitecore.Plugin
         protected abstract void DoHydrateCommand(Command command, TArg arg);
         protected abstract void DoInitialise(TArg arg);
         
-
         protected string CreateEncodedSitecoreLicense(TArg si)
         {
             var licenseBytes = File.ReadAllBytes(si.LicensePath);
