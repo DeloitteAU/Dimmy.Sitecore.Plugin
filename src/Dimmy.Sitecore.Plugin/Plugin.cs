@@ -9,14 +9,7 @@ namespace Dimmy.Sitecore.Plugin
     public class Plugin : IPlugin
     {
         public void Bootstrap(Container container)
-        { 
-            container.RegisterDecorator(
-            typeof(IProjectSubCommand), typeof(StartDecorator), Predicate);
-        }
-
-        private bool Predicate(DecoratorPredicateContext context)
         {
-            return context.ImplementationType == typeof(Start);
         }
     }
 }

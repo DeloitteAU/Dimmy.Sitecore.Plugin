@@ -8,6 +8,7 @@
         public class MetaData
         {
             public const string SitecoreVersion = "SitecoreVersion";
+            public const string SitecoreTopology = "SitecoreTopology";
         }
     }
 }
