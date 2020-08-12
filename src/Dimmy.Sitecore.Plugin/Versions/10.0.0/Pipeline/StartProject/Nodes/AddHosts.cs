@@ -1,35 +1,45 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.HostSystem;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
+using SharpHostsFile;
 
 namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
 {
-    public class AddHosts : Node<StartProjectContext>
+    public class AddHosts : Node<IStartProjectContext>
     {
-        private readonly ICommandHandler<AddHost> _addHostCommandHandler;
+        private readonly ICommandHandler<AddHostsFileMapEntries> _addHostCommandHandler;
 
-        public AddHosts(ICommandHandler<AddHost> addHostCommandHandler)
+        public AddHosts(ICommandHandler<AddHostsFileMapEntries> addHostCommandHandler)
         {
             _addHostCommandHandler = addHostCommandHandler;
         }
-        public override void DoExecute(StartProjectContext input)
+        public override void DoExecute(IStartProjectContext input)
         {
-            DoAddHostEntry(input, Constants.CdHostName, "Sitecore CD Host");
-            DoAddHostEntry(input, Constants.CmHostName, "Sitecore CM Host");
-            DoAddHostEntry(input, Constants.IdHostName, "Sitecore ID Host");
+            _addHostCommandHandler.Handle(new AddHostsFileMapEntries
+            {
+                HostsFileMapEntries = new List<HostsFileEntryBase>
+                {
+                    BuildHostsFileMapEntry(input, Constants.CdHostName, "Sitecore CD Host"),
+                    BuildHostsFileMapEntry(input, Constants.CmHostName, "Sitecore CM Host"),
+                    BuildHostsFileMapEntry(input, Constants.IdHostName, "Sitecore ID Host")
+                }
+            });
+
         }
 
-        private void DoAddHostEntry(StartProjectContext input, string sitecoreIdHostname, string comment)
+        private HostsFileMapEntry BuildHostsFileMapEntry(IStartProjectContext input, string sitecoreIdHostname, string comment)
         {
             var hostName = input.Project.VariableDictionary[sitecoreIdHostname];
-            _addHostCommandHandler.Handle(new AddHost
-            {
-                Address = IPAddress.Loopback,
-                Hostname = hostName,
-                Comment = comment
-            });
+
+            return new HostsFileMapEntry(
+                IPAddress.Loopback,
+                hostName,
+                comment
+            );
+
         }
     }
 }
