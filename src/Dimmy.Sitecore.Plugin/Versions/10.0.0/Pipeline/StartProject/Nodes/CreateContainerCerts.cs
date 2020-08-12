@@ -37,7 +37,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
                 Directory.CreateDirectory(traefikConfigPath);
             
             var serializer = new SerializerBuilder()
-                .WithNamingConvention(LowerCaseNamingConvention.Instance)
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
             
             var traefikConfigYaml = serializer.Serialize(traefikConfig);
