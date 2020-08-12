@@ -57,7 +57,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
         {
             var identityCertificatePassword = NonceService.Generate();
 
-            var certificate = _certificateService.CreateCertificate("dimmy.sitecore.plugin", "localhost");
+            var certificate = _certificateService.BuildCertificate("dimmy.sitecore.plugin", "localhost");
                 
              var x509Certificate2Export = certificate.Export(X509ContentType.Pfx, identityCertificatePassword);
              var x509Certificate2Base64String = Convert.ToBase64String(x509Certificate2Export);

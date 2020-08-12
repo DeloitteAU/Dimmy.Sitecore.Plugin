@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.IO;
 using Dimmy.Engine.Models.Yaml;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
@@ -75,33 +72,10 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
              return certificate;
             
 
-            var cert = _certificateService
-                .CreateCertificate(hostName, hostName);
+            var cert = _certificateService.BuildCertificate(hostName, hostName);
 
-
-            var privateKeyBytes =cert.GetECDsaPrivateKey().ExportECPrivateKey();
-                
-            
-            var builder = new StringBuilder("-----BEGIN RSA PRIVATE KEY");
-            builder.AppendLine("-----");
-
-            var base64PrivateKeyString = Convert.ToBase64String(privateKeyBytes);
-            var offset = 0;
-            const int LINE_LENGTH = 64;
-
-            while (offset < base64PrivateKeyString.Length)
-            {
-                var lineEnd = Math.Min(offset + LINE_LENGTH, base64PrivateKeyString.Length);
-                builder.AppendLine(base64PrivateKeyString.Substring(offset, lineEnd - offset));
-                offset = lineEnd;
-            }
-
-            builder.Append("-----END RSA PRIVATE KEY");
-            builder.AppendLine("-----");
-
-            
-            File.WriteAllText(certKeyPath, builder.ToString());
-            File.WriteAllBytes(certPath, cert.Export(X509ContentType.Cert));
+            File.WriteAllText(certKeyPath, _certificateService.CreateKey(cert));
+            File.WriteAllText(certPath, _certificateService.CreateCertificate(cert));
 
             return certificate;
         }
