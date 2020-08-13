@@ -40,7 +40,11 @@ Now all you need to do is navigate to the `working-path` and run `dimmy project 
 * Adds entries for each of the ports for each of the Sitecore roles into the non-public settings,
 * Adds in docker images for each of the roles into the public settings 
 
-Currently, this plugin only supports Sitecore 9.3; its aim, however, is to support all versions the Sitecore Docker Images build scripts build.
+Currently, this plugin supports:
+* Sitecore 9.3
+* Sitecore 10.0.0
+
+The  aim is to support all versions the Sitecore Docker Images build scripts build.
 
 ## Whats Next
 
