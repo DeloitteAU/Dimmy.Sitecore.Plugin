@@ -85,7 +85,7 @@ services:
       Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
       Sitecore_Sitecore__IdentityServer__AccountOptions__PasswordRecoveryUrl: https://#{Sitecore.Id.HostName}/sitecore/login?rc=1
       Sitecore_Sitecore__IdentityServer__Clients__PasswordClient__ClientSecrets__ClientSecret1: #{Sitecore.Id.Secret}
-      Sitecore_Sitecore__IdentityServer__Clients__DefaultClient__AllowedCorsOrigins__AllowedCorsOriginsGroup1: https://#{Sitecore.Id.HostName}
+      Sitecore_Sitecore__IdentityServer__Clients__DefaultClient__AllowedCorsOrigins__AllowedCorsOriginsGroup1: https://#{Sitecore.Cm.HostName}
       Sitecore_Sitecore__IdentityServer__CertificateRawData: #{Sitecore.Id.Certificate}
       Sitecore_Sitecore__IdentityServer__PublicOrigin: https://#{Sitecore.Id.HostName}
       Sitecore_Sitecore__IdentityServer__CertificateRawDataPassword: #{Sitecore.Id.CertificatePassword}

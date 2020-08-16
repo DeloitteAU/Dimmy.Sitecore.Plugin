@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using Dimmy.Engine.Models.Yaml;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
@@ -70,9 +72,12 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             
             if(File.Exists(certificate.CertFile))
              return certificate;
-            
 
-            var cert = _certificateService.BuildCertificate(hostName, hostName);
+            var baseDirectory = AppContext.BaseDirectory;
+            var dimmyCert = Path.Combine(baseDirectory, "dimmy.pfx");
+            var x509 = new X509Certificate2(dimmyCert);
+            
+            var cert = _certificateService.CreateSignedCertificate(hostName, hostName, x509);
 
             File.WriteAllText(certKeyPath, _certificateService.CreateKey(cert));
             File.WriteAllText(certPath, _certificateService.CreateCertificate(cert));
