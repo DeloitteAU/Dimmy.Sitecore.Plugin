@@ -79,8 +79,8 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             
             var cert = _certificateService.CreateSignedCertificate(hostName, hostName, x509);
 
-            File.WriteAllText(certKeyPath, _certificateService.CreateKey(cert));
-            File.WriteAllText(certPath, _certificateService.CreateCertificate(cert));
+            File.WriteAllText(certKeyPath, _certificateService.CreateKeyString(cert));
+            File.WriteAllText(certPath, _certificateService.CreateCertificateString(cert));
 
             return certificate;
         }
