@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Engine.Commands;
@@ -51,9 +52,21 @@ namespace Dimmy.Sitecore.Plugin
         {
             var arg = new TArg();
             
-            command.AddOption(new Option<string>("--license-path", "Path to the Sitecore License"));
-            command.AddOption(new Option<string>("--registry", $"Defaults to {arg.Registry}"));
-            command.AddOption(new Option<string>("--topology", $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));
+            command.AddOption(new Option<string>(
+                "--license-path", 
+                "Path to the Sitecore License"));
+            
+            command.AddOption(new Option<Dictionary<string, string>>("--registry", parseArgument: result =>
+            {
+                return result
+                    .Tokens
+                    .Select(t => t.Value.Split('='))
+                    .ToDictionary(p => p[0], p => p[1]);
+            }));
+            
+            command.AddOption(new Option<string>(
+                "--topology", 
+                $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));
             
             arg.PrivateVariables = new Dictionary<string, string>();
             arg.PublicVariables = new Dictionary<string, string>();

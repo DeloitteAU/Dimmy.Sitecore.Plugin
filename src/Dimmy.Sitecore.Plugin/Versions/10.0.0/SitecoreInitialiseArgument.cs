@@ -26,12 +26,45 @@
         public string XDBSearchWorkerIsolation { get; set; } = "default";
         public string XDBAutomationWorkerIsolation { get; set; } = "default";
         public string CortexProcessingWorkerIsolation { get; set; } = "default";
+        
+        // Commerce
+        public string XcEngineAuthoringHostName { get; set; } = "authoring.localhost";
+        public string XcEngineAuthoringIsolation { get; set; } = "default";
+        
+        public string XcBizFxHostName { get; set; } = "bizfx.localhost";
+        public string XcBizFxIsolation { get; set; } = "default";
+        
+        
+        public bool XcGlobalTrustedConnection { get; set; } = false;
+        public bool XcSharedTrustedConnection { get; set; } = false;
+        
+        
+        public string XcEngineGlobalDatabaseName { get; set; } = "SitecoreCommerce_Global";
+        public string XcEngineSharedDatabaseName { get; set; } = "SitecoreCommerce_SharedEnvironments";
+        
+        
+        public string XcEngineShopsHostName { get; set; } = "shops.localhost";
+        public string XcEngineShopsIsolation { get; set; } = "default";
+        
+        public string XcEngineMinionsHostName { get; set; } = "minions.localhost";
+        public string XcEngineMinionsIsolation { get; set; } = "default";
+        
+        public string XcEngineOpsHostName { get; set; } = "ops.localhost";
+        public string XcEngineOpsIsolation { get; set; } = "default";
+        
+        
+        public string XcBraintreeEnvironment { get; set; } = "sandbox";
+        public string XcBraintreeMerchantId { get; set; }
+        public string XcBraintreePublicKey { get; set; }
+        public string XcBraintreePrivateKey { get; set; }
+        
 
         public SitecoreInitialiseArgument()
         {
-            Registry = "scr.sitecore.com/sxp";
+            Registries.Add("sxp", "scr.sitecore.com/sxp");
+            Registries.Add("sxc", "scr.sitecore.com/sxc");
             Topology = "xm1";
-            WindowsVersion = "1909";
+            WindowsVersion = "ltsc2019";
         }
     }
 }

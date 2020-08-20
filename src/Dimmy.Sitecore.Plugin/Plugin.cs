@@ -7,7 +7,7 @@ namespace Dimmy.Sitecore.Plugin
     {
         public void Bootstrap(Container container)
         {
-            container.Collection.Register<Versions._10._0._0.Project.ISitecoreSubCommand>(GetType().Assembly);
+            container.Collection.Register<Versions._10._0._0.Project.ISitecoreProjectCommand>(GetType().Assembly);
         }
     }
 }

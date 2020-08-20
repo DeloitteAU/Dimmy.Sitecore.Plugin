@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.CommandLine;
+using System.Linq;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.Project;
 using NuGet.Packaging;
@@ -32,16 +33,17 @@ namespace Dimmy.Sitecore.Plugin.Versions._9._3._0
             
             var windowsServerCore = $"9.3.0-windowsservercore-{arg.WindowsServerCoreVersion}";
             var nanoServer = $"9.3.0-nanoserver-{arg.NanoServerVersion}";
+            var registry = arg.Registries.First().Value;
             arg.PublicVariables.AddRange(new Dictionary<string, string>
             {
-                {"MsSql.Image", $"{arg.Registry}/sitecore-{arg.Topology}-sqldev:{windowsServerCore}"},
-                {"Solr.Image", $"{arg.Registry}/sitecore-{arg.Topology}-solr:{nanoServer}"},
-                {"Sitecore.XConnect.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xconnect:{windowsServerCore}"},
-                {"Sitecore.XConnectAutomationEngine.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xconnect-automationengine:{windowsServerCore}"},
-                {"Sitecore.XConnectIndexWorker.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xconnect-indexworker:{windowsServerCore}"},
-                {"Sitecore.XConnectProcessingEngine.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xconnect-processingengine:{windowsServerCore}"},
-                {"Sitecore.CD.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cd:{windowsServerCore}"},
-                {"Sitecore.CM.Image", $"{arg.Registry}/sitecore-{arg.Topology}-standalone:{windowsServerCore}"},
+                {"MsSql.Image", $"{registry}/sitecore-{arg.Topology}-sqldev:{windowsServerCore}"},
+                {"Solr.Image", $"{registry}/sitecore-{arg.Topology}-solr:{nanoServer}"},
+                {"Sitecore.XConnect.Image", $"{registry}/sitecore-{arg.Topology}-xconnect:{windowsServerCore}"},
+                {"Sitecore.XConnectAutomationEngine.Image", $"{registry}/sitecore-{arg.Topology}-xconnect-automationengine:{windowsServerCore}"},
+                {"Sitecore.XConnectIndexWorker.Image", $"{registry}/sitecore-{arg.Topology}-xconnect-indexworker:{windowsServerCore}"},
+                {"Sitecore.XConnectProcessingEngine.Image", $"{registry}/sitecore-{arg.Topology}-xconnect-processingengine:{windowsServerCore}"},
+                {"Sitecore.CD.Image", $"{registry}/sitecore-{arg.Topology}-cd:{windowsServerCore}"},
+                {"Sitecore.CM.Image", $"{registry}/sitecore-{arg.Topology}-standalone:{windowsServerCore}"},
             });
         }
     }

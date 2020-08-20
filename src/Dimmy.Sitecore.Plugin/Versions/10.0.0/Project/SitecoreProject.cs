@@ -4,17 +4,17 @@ using Dimmy.Cli.Commands.Project;
 
 namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Project
 {
-    public class Sitecore: ProjectSubCommand<SitecoreArgument>
+    public class SitecoreProject: ProjectSubCommand<SitecoreProjectArgument>
     {
-        private readonly IEnumerable<ISitecoreSubCommand> _sitecoreProjectSubCommands;
+        private readonly IEnumerable<ISitecoreProjectCommand> _sitecoreProjectSubCommands;
 
-        public Sitecore(IEnumerable<ISitecoreSubCommand> sitecoreProjectSubCommands)
+        public SitecoreProject(IEnumerable<ISitecoreProjectCommand> sitecoreProjectSubCommands)
         {
             _sitecoreProjectSubCommands = sitecoreProjectSubCommands;
         }
         
        
-        public override void CommandAction(SitecoreArgument arg)
+        public override void CommandAction(SitecoreProjectArgument arg)
         {
             
         }

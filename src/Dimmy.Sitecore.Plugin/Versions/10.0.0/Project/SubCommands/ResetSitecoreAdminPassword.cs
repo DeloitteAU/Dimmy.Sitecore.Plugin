@@ -8,7 +8,7 @@ using Ductus.FluentDocker.Services;
 
 namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Project.SubCommands
 {
-    public class ResetSitecoreAdminPassword : SitecoreSubCommand<ResetSitecoreAdminPasswordArgument>
+    public class ResetSitecoreAdminPassword : SitecoreProjectCommand<ResetSitecoreProjectAdminPasswordArgument>
     {
         private readonly IProjectService _projectService;
         private readonly IHostService _docker;
@@ -21,7 +21,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Project.SubCommands
             _docker = docker;
         }
         
-        public override void CommandAction(ResetSitecoreAdminPasswordArgument arg)
+        public override void CommandAction(ResetSitecoreProjectAdminPasswordArgument arg)
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("There is a bug in the mssql container where you can only reset the password once per session (start and then stop).");

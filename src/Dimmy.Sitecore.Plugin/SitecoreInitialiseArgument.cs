@@ -1,4 +1,5 @@
-﻿using Dimmy.Engine.Commands.Project;
+﻿using System.Collections.Generic;
+using Dimmy.Engine.Commands.Project;
 
 namespace Dimmy.Sitecore.Plugin
 {
@@ -6,7 +7,7 @@ namespace Dimmy.Sitecore.Plugin
     {
         public string LicensePath { get; set; }
         
-        public string Registry { get; set; }
+        public Dictionary<string, string> Registries { get; set; }
         
         public string Topology { get; set; }
         

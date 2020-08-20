@@ -52,6 +52,8 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
             command.AddOption(new Option<string>("--xdb-search-worker-isolation", $"the docker isolation for xDB Search Worker. Defaults to {arg.XDBSearchWorkerIsolation}"));
             command.AddOption(new Option<string>("--xdb-automation-worker-isolation", $"the docker isolation for xDB Automation Worker. Defaults to {arg.XDBAutomationWorkerIsolation}"));
             command.AddOption(new Option<string>("--cortex-processing-worker-isolation", $"the docker isolation for Cortex Processing Worker. Defaults to {arg.CortexProcessingWorkerIsolation}"));
+            
+            command.AddOption(new Option<string>("--engine-authoring-isolation", $"the docker isolation for Commerce engine authoring. Defaults to {arg.XcEngineAuthoringIsolation}"));
         }
         protected override void DoInitialise(SitecoreInitialiseArgument arg)
         {
@@ -69,6 +71,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Sitecore.Id.CertificatePassword", identityCertificatePassword},
                 {"Sitecore.Id.Certificate", x509Certificate2Base64String},
                 {"Sitecore.Rep.ApiKey", NonceService.Generate()},
+                {"Sitecore.Xc.Engine.Authoring.ClientId", NonceService.Generate()},
             });
 
             arg.PublicVariables.AddRange(new Dictionary<string, string>
@@ -76,65 +79,113 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Traefik.Image", arg.TraefikIImage},
                 {"Traefik.Isolation", arg.TraefikIsolation},
                 
-                {"Redis.Image", $"{arg.Registry}/sitecore-redis:10.0.0-{arg.WindowsVersion}"},
+                {"Redis.Image", $"{arg.Registries["sxp"]}/sitecore-redis:10.0.0-{arg.WindowsVersion}"},
                 {"Redis.Isolation", arg.RedisIsolation},
                 
-                {"MsSql.Image", $"{arg.Registry}/sitecore-{arg.Topology}-mssql:10.0.0-{arg.WindowsVersion}"},
+                {"MsSql.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-mssql:10.0.0-{arg.WindowsVersion}"},
                 {"MsSql.Isolation", arg.MssqlIsolation},
                 
-                {"Solr.Image", $"{arg.Registry}/sitecore-{arg.Topology}-solr:10.0.0-{arg.WindowsVersion}"},
+                {"Solr.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-solr:10.0.0-{arg.WindowsVersion}"},
                 {"Solr.Isolation", arg.SolrIsolation},
                 
-                {"Sitecore.Id.Image", $"{arg.Registry}/sitecore-id:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.Id.Image", $"{arg.Registries["sxp"]}/sitecore-id:10.0.0-{arg.WindowsVersion}"},
                 {Constants.IdHostName, arg.IdHostName},
                 {"Sitecore.Id.Isolation", arg.IdIsolation},
                 
-                {"Sitecore.Cd.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cd:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.Cd.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-cd:10.0.0-{arg.WindowsVersion}"},
                 {Constants.CdHostName, arg.CdHostName},
                 {"Sitecore.Cd.Isolation", arg.CdIsolation},
                 
-                {"Sitecore.Cm.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cm:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.Cm.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-cm:10.0.0-{arg.WindowsVersion}"},
                 {Constants.CmHostName, arg.CmHostName},
                 {"Sitecore.Cm.Isolation", arg.CmIsolation},
                 
-                {"Sitecore.Prc.Image", $"{arg.Registry}/sitecore-{arg.Topology}-prc:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.Prc.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-prc:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.Prc.Isolation", arg.PrcIsolation},
                 
-                {"Sitecore.Rep.Image", $"{arg.Registry}/sitecore-{arg.Topology}-rep:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.Rep.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-rep:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.Rep.Isolation", arg.RepIsolation},
                 
-                {"Sitecore.XConnect.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xconnect:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XConnect.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xconnect:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XConnect.Isolation", arg.XConnectIsolation},
                 
-                {"Sitecore.XDBCollection.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbcollection:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBCollection.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbcollection:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBCollection.Isolation", arg.XDBCollectionIsolation},
                 
-                {"Sitecore.XDBSearch.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbsearch:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBSearch.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbsearch:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBSearch.Isolation", arg.XDBSearchIsolation},
                 
-                {"Sitecore.XDBAutomation.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbautomation:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBAutomation.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbautomation:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBAutomation.Isolation", arg.XDBAutomationIsolation},
                 
-                {"Sitecore.XDBAutomationRpt.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbautomationrpt:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBAutomationRpt.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbautomationrpt:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBAutomationRpt.Isolation", arg.XDBAutomationRptIsolation},
                 
-                {"Sitecore.CortexProcessing.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cortexprocessing:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.CortexProcessing.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-cortexprocessing:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.CortexProcessing.Isolation", arg.CortexProcessingIsolation},
                 
-                {"Sitecore.CortexReporting.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cortexreporting:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.CortexReporting.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-cortexreporting:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.CortexReporting.Isolation", arg.CortexReportingIsolation},
                 
-                {"Sitecore.XBDRefData.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbrefdata:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XBDRefData.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbrefdata:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XBDRefData.Isolation", arg.XBDRefDataIsolation},
                 
-                {"Sitecore.XDBSearchWorker.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbsearchworker:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBSearchWorker.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbsearchworker:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBSearchWorker.Isolation", arg.XDBSearchWorkerIsolation},
                 
-                {"Sitecore.XDBAutomationWorker.Image", $"{arg.Registry}/sitecore-{arg.Topology}-xdbautomationworker:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.XDBAutomationWorker.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-xdbautomationworker:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.XDBAutomationWorker.Isolation", arg.XDBAutomationWorkerIsolation},
                 
-                {"Sitecore.CortexProcessingWorker.Image", $"{arg.Registry}/sitecore-{arg.Topology}-cortexprocessingworker:10.0.0-{arg.WindowsVersion}"},
+                {"Sitecore.CortexProcessingWorker.Image", $"{arg.Registries["sxp"]}/sitecore-{arg.Topology}-cortexprocessingworker:10.0.0-{arg.WindowsVersion}"},
                 {"Sitecore.CortexProcessingWorker.Isolation", arg.CortexProcessingWorkerIsolation},
+                
+                // Commerce
+                
+                {"Sitecore.Xc.BizFx.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
+                {Constants.BizFxHostName, arg.XcBizFxHostName},
+                {"Sitecore.Xc.BizFx.Isolation", arg.XcBizFxIsolation},
+                
+                {"Sitecore.Xc.EngineAuthoring.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
+                {Constants.EngineAuthoringHostName, arg.XcEngineAuthoringHostName},
+                {"Sitecore.Xc.EngineAuthoring.Isolation", arg.XcEngineAuthoringIsolation},
+                
+                {"Sitecore.Xc.GlobalTrustedConnection", arg.XcGlobalTrustedConnection.ToString()},
+                {"Sitecore.Xc.SharedTrustedConnection", arg.XcSharedTrustedConnection.ToString()},
+                
+                {"Sitecore.Xc.Engine.GlobalDatabaseName", arg.XcEngineGlobalDatabaseName},
+                {"Sitecore.Xc.Engine.SharedDatabaseName", arg.XcEngineSharedDatabaseName},
+                
+                {"Sitecore.Xc.Engine.SharedDatabaseName", arg.XcEngineSharedDatabaseName},
+                
+                {"Sitecore.Xc.EngineShops.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
+                {Constants.EngineShopsHostName, arg.XcEngineShopsHostName},
+                {"Sitecore.Xc.EngineShops.Isolation", arg.XcEngineShopsIsolation},
+                
+                {"Sitecore.Xc.EngineMinions.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
+                {Constants.EngineMinionsHostName, arg.XcEngineMinionsHostName},
+                {"Sitecore.Xc.EngineMinions.Isolation", arg.XcEngineMinionsIsolation},
+                
+                {"Sitecore.Xc.EngineOps.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
+                {Constants.EngineOpsHostName, arg.XcEngineOpsHostName},
+                {"Sitecore.Xc.EngineOps.Isolation", arg.XcEngineOpsIsolation},
+                
+                
+                
+                {"Sitecore.Xc.Braintree.Environment", arg.XcBraintreeEnvironment},
+                {"Sitecore.Xc.Braintree.MerchantId", arg.XcBraintreeMerchantId},
+                {"Sitecore.Xc.Braintree.PublicKey", arg.XcBraintreePublicKey},
+                {"Sitecore.Xc.Braintree.PrivateKey", arg.XcBraintreePrivateKey},
+                
+                
+                
+                
+
+                
+
+                
+                
+                
+                
                 
             });
             
