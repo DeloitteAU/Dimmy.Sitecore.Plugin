@@ -155,8 +155,6 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
                 {"Sitecore.Xc.Engine.GlobalDatabaseName", arg.XcEngineGlobalDatabaseName},
                 {"Sitecore.Xc.Engine.SharedDatabaseName", arg.XcEngineSharedDatabaseName},
                 
-                {"Sitecore.Xc.Engine.SharedDatabaseName", arg.XcEngineSharedDatabaseName},
-                
                 {"Sitecore.Xc.EngineShops.Image", $"{arg.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{arg.WindowsVersion}"},
                 {Constants.EngineShopsHostName, arg.XcEngineShopsHostName},
                 {"Sitecore.Xc.EngineShops.Isolation", arg.XcEngineShopsIsolation},
