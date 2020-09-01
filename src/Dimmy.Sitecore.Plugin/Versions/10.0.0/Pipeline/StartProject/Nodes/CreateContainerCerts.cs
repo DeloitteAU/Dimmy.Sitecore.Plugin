@@ -20,19 +20,22 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             var traefikCertsPath = Path.Combine(input.WorkingPath, "traefik", "certs");
             if (!Directory.Exists(traefikCertsPath))
                 Directory.CreateDirectory(traefikCertsPath);
-          
+            
             var traefikConfig = new Config();
-            traefikConfig.Tls.Certificates.Add(
-                CreateCert(input.Project, Constants.CdHostName, traefikCertsPath)
+            
+            foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)
+            {
+                if (!service.Labels.ContainsKey("traefik.http.routers.id-secure.rule")) continue;
+                var host = service.Labels["traefik.http.routers.id-secure.rule"];
+
+                var hostName = host
+                    .Replace("Host(`", "")
+                    .Replace("`)", "");
+                
+                traefikConfig.Tls.Certificates.Add(
+                    CreateCert(input.Project, hostName, traefikCertsPath)
                 );
-            
-            traefikConfig.Tls.Certificates.Add(
-                    CreateCert(input.Project, Constants.CmHostName, traefikCertsPath)
-            );
-            
-            traefikConfig.Tls.Certificates.Add(
-                    CreateCert(input.Project, Constants.IdHostName, traefikCertsPath)
-            );
+            }
             
             var traefikConfigPath = Path.Combine(input.WorkingPath, "traefik", "config", "dynamic");
             if (!Directory.Exists(traefikConfigPath))

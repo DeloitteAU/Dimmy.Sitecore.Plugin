@@ -18,26 +18,31 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
         }
         public override void DoExecute(IStartProjectContext input)
         {
+            var hostsFileEntries = new List<HostsFileEntryBase>();
+            foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)
+            {
+                if (!service.Labels.ContainsKey("traefik.http.routers.id-secure.rule")) continue;
+                var host = service.Labels["traefik.http.routers.id-secure.rule"];
+
+                var hostName = host
+                    .Replace("Host(`", "")
+                    .Replace("`)", "");
+                
+                var hostsFileMapEntry = new HostsFileMapEntry(
+                    IPAddress.Loopback,
+                    hostName,
+                    $"{service.Name} Host"
+                );
+                hostsFileEntries.Add(hostsFileMapEntry);
+            }
+            
+            
             _addHostCommandHandler.Handle(new AddHostsFileMapEntries
             {
-                HostsFileMapEntries = new List<HostsFileEntryBase>
-                {
-                    BuildHostsFileMapEntry(input, Constants.CdHostName, "Sitecore CD Host"),
-                    BuildHostsFileMapEntry(input, Constants.CmHostName, "Sitecore CM Host"),
-                    BuildHostsFileMapEntry(input, Constants.IdHostName, "Sitecore ID Host")
-                }
+                HostsFileMapEntries = hostsFileEntries
             });
         }
 
-        private HostsFileMapEntry BuildHostsFileMapEntry(IStartProjectContext input, string sitecoreIdHostname, string comment)
-        {
-            var hostName = input.Project.VariableDictionary[sitecoreIdHostname];
-
-            return new HostsFileMapEntry(
-                IPAddress.Loopback,
-                hostName,
-                comment
-            );
-        }
+    
     }
 }

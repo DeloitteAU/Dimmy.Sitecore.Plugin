@@ -67,7 +67,7 @@ services:
       dimmy.dev.project.role: "solr"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   id:
-    isolation: #{Sitecore.Id.Isolation}
+    isolation: #{Id.Isolation}
     image: #{Sitecore.Id.Image}
     environment:
       Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
@@ -95,7 +95,7 @@ services:
       - "dimmy.dev.project.role=id"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cm:
-    isolation: #{Sitecore.Cm.Isolation}
+    isolation: #{Cm.Isolation}
     image: #{Sitecore.Cm.Image}
     depends_on:
       id:
@@ -143,7 +143,7 @@ services:
       - "dimmy.dev.project.role=cm"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   xconnect:
-    isolation: #{Sitecore.XConnect.Isolation}
+    isolation: #{XConnect.Isolation}
     image: #{Sitecore.XConnect.Image}
     ports:
       - "8081:80"
@@ -176,7 +176,7 @@ services:
       dimmy.dev.project.role: "xconnect"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbsearchworker:
-    isolation: #{Sitecore.XDBsearchWorker.Isolation}
+    isolation: #{XDBsearchWorker.Isolation}
     image: #{Sitecore.XDBsearchWorker.Image}
     depends_on:
       xconnect:
@@ -199,7 +199,7 @@ services:
       dimmy.dev.project.role: "xdbsearchworker"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbautomationworker:
-    isolation: #{Sitecore.XDBAutomationWorker.Isolation}
+    isolation: #{XDBAutomationWorker.Isolation}
     image: #{Sitecore.XDBAutomationWorker.Image}
     depends_on:
       xconnect:
@@ -221,7 +221,7 @@ services:
       dimmy.dev.project.role: "xdbautomationworker"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   cortexprocessingworker:
-    isolation: #{Sitecore.CortexProcessingWorker.Isolation}
+    isolation: #{CortexProcessingWorker.Isolation}
     image: #{Sitecore.CortexProcessingWorker.Image}
     depends_on:
       xconnect:

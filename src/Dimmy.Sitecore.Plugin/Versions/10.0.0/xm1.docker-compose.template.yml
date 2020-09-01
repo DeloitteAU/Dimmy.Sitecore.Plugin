@@ -79,7 +79,7 @@ services:
       dimmy.dev.project.role: "solr"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   id:
-    isolation: #{Sitecore.Id.Isolation}
+    isolation: #{Id.Isolation}
     image: #{Sitecore.Id.Image}
     environment:
       Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
@@ -107,7 +107,7 @@ services:
       - "dimmy.dev.project.role=id"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cd:
-    isolation: #{Sitecore.Cd.Isolation}
+    isolation: #{Cd.Isolation}
     image: #{Sitecore.Cd.Image}
     depends_on:
       mssql:
@@ -137,7 +137,7 @@ services:
       - "dimmy.dev.project.role=cd"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cm:
-    isolation: #{Sitecore.Cm.Isolation}
+    isolation: #{Cm.Isolation}
     image: #{Sitecore.Cm.Image}
     depends_on:
       mssql:

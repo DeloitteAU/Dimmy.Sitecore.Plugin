@@ -80,7 +80,7 @@ services:
       dimmy.dev.project.role: "solr"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   id:
-    isolation: #{Sitecore.Id.Isolation}
+    isolation: #{Id.Isolation}
     image: #{Sitecore.Id.Image}
     environment:
       Sitecore_Sitecore__IdentityServer__SitecoreMemberShipOptions__ConnectionString: Data Source=mssql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
@@ -108,7 +108,7 @@ services:
       - "dimmy.dev.project.role=id"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cd:
-    isolation: #{Sitecore.Cd.Isolation}
+    isolation: #{Cd.Isolation}
     image: #{Sitecore.Cd.Image}
     depends_on:
       mssql:
@@ -152,7 +152,7 @@ services:
       - "dimmy.dev.project.role=cd"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
   cm:
-    isolation: #{Sitecore.Cm.Isolation}
+    isolation: #{Cm.Isolation}
     image: #{Sitecore.Cm.Image}
     depends_on:
       id:
@@ -217,7 +217,7 @@ services:
       - "dimmy.dev.project.role=cm"
       - "dimmy.dev.project.workingpath=#{Project.WorkingPath}" 
   prc:
-    isolation: #{Sitecore.Prc.Isolation}
+    isolation: #{Prc.Isolation}
     image: #{Sitecore.Prc.Image}
     depends_on:
       mssql:
@@ -246,7 +246,7 @@ services:
       dimmy.dev.project.role: "prc"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   rep:
-    isolation: #{Sitecore.Rep.Isolation}
+    isolation: #{Rep.Isolation}
     image: #{Sitecore.Rep.Image}
     depends_on:
       mssql:
@@ -269,7 +269,7 @@ services:
       dimmy.dev.project.role: "rep"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbcollection:
-    isolation: #{Sitecore.XDBCollection.Isolation}
+    isolation: #{XDBCollection.Isolation}
     image: #{Sitecore.XDBCollection.Image}
     depends_on:
       mssql:
@@ -290,7 +290,7 @@ services:
       dimmy.dev.project.role: "xdbcollection"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbsearch:
-    isolation: #{Sitecore.XDBSearch.Isolation}
+    isolation: #{XDBSearch.Isolation}
     image: #{Sitecore.XDBSearch.Image}
     depends_on:
       xdbcollection:
@@ -316,7 +316,7 @@ services:
       dimmy.dev.project.role: "xdbsearch"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbautomation:
-    isolation: #{Sitecore.XDBAutomation.Isolation}
+    isolation: #{XDBAutomation.Isolation}
     image: #{Sitecore.XDBAutomation.Image}
     depends_on:
       mssql:
@@ -342,7 +342,7 @@ services:
       dimmy.dev.project.role: "xdbautomation"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbautomationrpt:
-    isolation: #{Sitecore.XDBAutomationRpt.Isolation}
+    isolation: #{XDBAutomationRpt.Isolation}
     image: #{Sitecore.XDBAutomationRpt.Image}
     depends_on:
       mssql:
@@ -361,7 +361,7 @@ services:
       dimmy.dev.project.role: "xdbautomationrpt"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   cortexprocessing:
-    isolation: #{Sitecore.CortexProcessing.Isolation}
+    isolation: #{CortexProcessing.Isolation}
     image: #{Sitecore.CortexProcessing.Image}
     depends_on:
       mssql:
@@ -379,7 +379,7 @@ services:
       dimmy.dev.project.role: "cortexprocessing"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   cortexreporting:
-    isolation: #{Sitecore.CortexReporting.Isolation}
+    isolation: #{CortexReporting.Isolation}
     image: #{Sitecore.CortexReporting.Image}
     depends_on:
       mssql:
@@ -397,7 +397,7 @@ services:
       dimmy.dev.project.role: "cortexreporting"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbrefdata:
-    isolation: #{Sitecore.XBDRefData.Isolation}
+    isolation: #{XBDRefData.Isolation}
     image: #{Sitecore.XBDRefData.Image}
     depends_on:
       mssql:
@@ -415,7 +415,7 @@ services:
       dimmy.dev.project.role: "xdbrefdata"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbsearchworker:
-    isolation: #{Sitecore.XDBSearchWorker.Isolation}
+    isolation: #{XDBSearchWorker.Isolation}
     image: #{Sitecore.XDBSearchWorker.Image}
     depends_on:
       xdbsearch:
@@ -438,7 +438,7 @@ services:
       dimmy.dev.project.role: "xdbsearchworker"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   xdbautomationworker:
-    isolation: #{Sitecore.XDBAutomationWorker.Isolation}
+    isolation: #{XDBAutomationWorker.Isolation}
     image: #{Sitecore.XDBAutomationWorker.Image}
     depends_on:
       xdbcollection:
@@ -463,7 +463,7 @@ services:
       dimmy.dev.project.role: "xdbautomationworker"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   cortexprocessingworker:
-    isolation: #{Sitecore.CortexProcessingWorker.Isolation}
+    isolation: #{CortexProcessingWorker.Isolation}
     image: #{Sitecore.CortexProcessingWorker.Image}
     depends_on:
       cortexprocessing:
