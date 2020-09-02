@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Dimmy.Engine.Models.Yaml;
 using Dimmy.Engine.Pipelines;
@@ -25,16 +26,18 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             
             foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)
             {
-                if (!service.Labels.ContainsKey("traefik.http.routers.id-secure.rule")) continue;
-                var host = service.Labels["traefik.http.routers.id-secure.rule"];
+                if (!service.Labels.ContainsKey("traefik.enable")) continue;
+                var host = service
+                    .Labels
+                    .Single(l => l.Key.EndsWith("rule"))
+                    .Value;
 
                 var hostName = host
                     .Replace("Host(`", "")
                     .Replace("`)", "");
-                
-                traefikConfig.Tls.Certificates.Add(
-                    CreateCert(input.Project, hostName, traefikCertsPath)
-                );
+
+                var certificate = CreateCert(hostName, traefikCertsPath);
+                traefikConfig.Tls.Certificates.Add(certificate);
             }
             
             var traefikConfigPath = Path.Combine(input.WorkingPath, "traefik", "config", "dynamic");
@@ -57,11 +60,8 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             _certificateService = certificateService;
         }
 
-        private Certificate CreateCert(ProjectYaml project, string sitecoreIdHostname,
-            string traefikCertsPath)
+        private Certificate CreateCert(string hostName, string traefikCertsPath)
         {
-            var hostName = project.VariableDictionary[sitecoreIdHostname];
-            
             var certsPath = Path.Combine(traefikCertsPath, $"{hostName}");
 
             var certKeyPath = $"{certsPath}.key";

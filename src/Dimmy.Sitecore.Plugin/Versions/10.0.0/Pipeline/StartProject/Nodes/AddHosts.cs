@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Dimmy.Engine.Commands;
 using Dimmy.Engine.Commands.HostSystem;
@@ -21,8 +22,11 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             var hostsFileEntries = new List<HostsFileEntryBase>();
             foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)
             {
-                if (!service.Labels.ContainsKey("traefik.http.routers.id-secure.rule")) continue;
-                var host = service.Labels["traefik.http.routers.id-secure.rule"];
+                if (!service.Labels.ContainsKey("traefik.enable")) continue;
+                var host = service
+                    .Labels
+                    .Single(l => l.Key.EndsWith("rule"))
+                    .Value;
 
                 var hostName = host
                     .Replace("Host(`", "")
