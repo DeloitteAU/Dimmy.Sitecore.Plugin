@@ -35,6 +35,12 @@
 	  <Content Include="Versions\10.0.0\xp1.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Versions\9.1.0\xm.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Versions\9.1.0\xp.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Versions\9.3.0\xm.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
@@ -53,11 +59,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Dimmy.Cli" Version="0.0.2" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Dimmy\src\Dimmy.Cli\Dimmy.Cli.csproj" />
 	</ItemGroup>
+
+
 
 </Project>

@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Dimmy.Cli.Commands.Project.SubCommands;
-using Dimmy.Engine.Commands;
-using Dimmy.Engine.Commands.Project;
+using Dimmy.Engine.Pipelines;
+using Dimmy.Engine.Pipelines.InitialiseProject;
 using Dimmy.Engine.Services;
 using NuGet.Packaging;
 using SharpCompress.Compressors;
@@ -15,16 +15,17 @@ using SharpCompress.Compressors.Deflate;
 
 namespace Dimmy.Sitecore.Plugin
 {
-    public abstract class SitecoreInitialiseBase<TArg> : InitialiseSubCommand
-        where TArg : SitecoreInitialiseArgument, new()
+    public abstract class SitecoreInitialiseBase<TContext> : InitialiseSubCommand
+        where TContext : SitecoreInitialiseContext, new()
     {
-        protected readonly ICommandHandler<InitialiseProject> InitialiseProjectCommandHandler;
+        protected readonly Pipeline<Node<IInitialiseProjectContext>, IInitialiseProjectContext> InitialiseProjectPipeline;
+
         public string TemplatePath
         {
             get
             {
                 var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                return Path.Join(assemblyPath, $"content/Versions/{Version}");
+                return Path.Join(assemblyPath, $"Versions/{Version}");
             }
         }
         protected abstract string Version { get; }
@@ -43,14 +44,15 @@ namespace Dimmy.Sitecore.Plugin
         }
 
         protected SitecoreInitialiseBase(
-            ICommandHandler<InitialiseProject> initialiseProjectCommandHandler)
+            Pipeline<Node<IInitialiseProjectContext>, IInitialiseProjectContext> initialiseProjectPipeline)
         {
-            InitialiseProjectCommandHandler = initialiseProjectCommandHandler;
+            InitialiseProjectPipeline = initialiseProjectPipeline;
+            
         }
 
         public override void HydrateCommand(Command command)
         {
-            var arg = new TArg();
+            var arg = new TContext();
             
             command.AddOption(new Option<string>(
                 "--license-path", 
@@ -72,28 +74,30 @@ namespace Dimmy.Sitecore.Plugin
             arg.PublicVariables = new Dictionary<string, string>();
 
             DoHydrateCommand(command, arg);
-            command.Handler = CommandHandler.Create((TArg arg) => Initialise(arg));
+            command.Handler = CommandHandler.Create((TContext arg) => Initialise(arg));
         }
 
-        private void Initialise(TArg arg)
+        private void Initialise(TContext context)
         {
-            arg.PrivateVariables.AddRange(new Dictionary<string, string>
+            context.PrivateVariables.AddRange(new Dictionary<string, string>
             {
                 {"MsSql.SaPassword", NonceService.Generate()},
-                {"Sitecore.License", CreateEncodedSitecoreLicense(arg)},
+                {"Sitecore.License", CreateEncodedSitecoreLicense(context)},
                 {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
             });
             
-            arg.MetaData.Add("SitecoreVersion", Version);
-            arg.MetaData.Add(Constants.MetaData.SitecoreTopology, arg.Topology);
+            context.MetaData.Add("SitecoreVersion", Version);
+            context.MetaData.Add(Constants.MetaData.SitecoreTopology, context.Topology);
             
-            DoInitialise(arg);
+            DoInitialise(context);
+            
+            InitialiseProjectPipeline.Execute(context);
         }
 
-        protected abstract void DoHydrateCommand(Command command, TArg arg);
-        protected abstract void DoInitialise(TArg arg);
+        protected abstract void DoHydrateCommand(Command command, TContext arg);
+        protected abstract void DoInitialise(TContext context);
         
-        protected string CreateEncodedSitecoreLicense(TArg si)
+        protected string CreateEncodedSitecoreLicense(TContext si)
         {
             var licenseBytes = File.ReadAllBytes(si.LicensePath);
             using var licenseMemoryStream = new MemoryStream();
@@ -105,7 +109,5 @@ namespace Dimmy.Sitecore.Plugin
             var sitecoreLicense = Convert.ToBase64String(licenseMemoryStream.ToArray());
             return sitecoreLicense;
         }
-        
-        
     }
 }
