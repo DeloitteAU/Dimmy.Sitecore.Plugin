@@ -2,15 +2,15 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Dimmy.Engine.Models.Yaml;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
 using Dimmy.Engine.Services;
+using Dimmy.Sitecore.Plugin.Versions._10._0._0;
 using Dimmy.Sitecore.Plugin.Versions._10._0._0.Models.Traefik;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
+namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
 {
     public class CreateContainerCerts : Node<IStartProjectContext>
     {

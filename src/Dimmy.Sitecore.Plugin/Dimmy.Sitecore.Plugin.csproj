@@ -41,6 +41,12 @@
 	  <Content Include="Versions\9.1.0\xp.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Versions\9.1.1\xm.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Versions\9.1.1\xp.docker-compose.template.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Versions\9.3.0\xm.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

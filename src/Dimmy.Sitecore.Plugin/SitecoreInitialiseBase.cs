@@ -9,14 +9,13 @@ using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.InitialiseProject;
 using Dimmy.Engine.Services;
-using NuGet.Packaging;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
 namespace Dimmy.Sitecore.Plugin
 {
-    public abstract class SitecoreInitialiseBase<TContext> : InitialiseSubCommand
-        where TContext : SitecoreInitialiseContext, new()
+    public abstract class SitecoreInitialiseBase<TArgument> : InitialiseSubCommand
+        where TArgument : SitecoreInitialiseArgument, new()
     {
         protected readonly Pipeline<Node<IInitialiseProjectContext>, IInitialiseProjectContext> InitialiseProjectPipeline;
 
@@ -47,57 +46,83 @@ namespace Dimmy.Sitecore.Plugin
             Pipeline<Node<IInitialiseProjectContext>, IInitialiseProjectContext> initialiseProjectPipeline)
         {
             InitialiseProjectPipeline = initialiseProjectPipeline;
-            
         }
 
         public override void HydrateCommand(Command command)
         {
-            var arg = new TContext();
+            var arg = new TArgument();
+
             
             command.AddOption(new Option<string>(
                 "--license-path", 
                 "Path to the Sitecore License"));
             
-            command.AddOption(new Option<Dictionary<string, string>>("--registry", parseArgument: result =>
+            
+            command.AddOption(new Option<string>(
+                "--registry", 
+                "registry to pull docker images from"));
+            
+            command.AddOption(new Option<Dictionary<string, string>>("--registries", parseArgument: result =>
             {
+                if (result.Argument.Name == "registry")
+                {
+                    return new Dictionary<string, string>
+                    {
+                        {"defult", result.Tokens.First().Value}
+                    };
+                }
                 return result
                     .Tokens
                     .Select(t => t.Value.Split('='))
                     .ToDictionary(p => p[0], p => p[1]);
-            }));
+            }, description: "registry to pull docker images from"));
             
+
             command.AddOption(new Option<string>(
                 "--topology", 
                 $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));
             
-            arg.PrivateVariables = new Dictionary<string, string>();
-            arg.PublicVariables = new Dictionary<string, string>();
-
             DoHydrateCommand(command, arg);
-            command.Handler = CommandHandler.Create((TContext arg) => Initialise(arg));
+            command.Handler = CommandHandler.Create((TArgument arg) => Initialise(arg));
         }
 
-        private void Initialise(TContext context)
+        private void Initialise(TArgument argument)
         {
-            context.PrivateVariables.AddRange(new Dictionary<string, string>
+            var context = new InitialiseProjectContext
             {
-                {"MsSql.SaPassword", NonceService.Generate()},
-                {"Sitecore.License", CreateEncodedSitecoreLicense(context)},
-                {"Sitecore.TelerikEncryptionKey", NonceService.Generate()},
-            });
+                PrivateVariables = new Dictionary<string, string>(),
+                PublicVariables = new Dictionary<string, string>()
+            };
             
+            context.PrivateVariables.Add("MsSql.SaPassword", NonceService.Generate());
+            context.PrivateVariables.Add("Sitecore.License", CreateEncodedSitecoreLicense(argument));
+            context.PrivateVariables.Add("Sitecore.TelerikEncryptionKey", NonceService.Generate());
+
             context.MetaData.Add("SitecoreVersion", Version);
-            context.MetaData.Add(Constants.MetaData.SitecoreTopology, context.Topology);
-            
-            DoInitialise(context);
+            context.MetaData.Add(Constants.MetaData.SitecoreTopology, argument.Topology);
+
+            context.WorkingPath = argument.WorkingPath;
+            context.SourceCodePath = argument.SourceCodePath;
+            context.Name = argument.Name;
+            if (!string.IsNullOrEmpty(argument.DockerComposeTemplate))
+            {
+                context.DockerComposeTemplatePath = argument.DockerComposeTemplate;
+            }
+            else
+            {
+                context.DockerComposeTemplatePath =
+                    Path.Join(TemplatePath, $"{argument.Topology}.docker-compose.template.yml");
+            }
+
+            DoInitialise(argument, context);
             
             InitialiseProjectPipeline.Execute(context);
         }
 
-        protected abstract void DoHydrateCommand(Command command, TContext arg);
-        protected abstract void DoInitialise(TContext context);
+        protected abstract void DoHydrateCommand(Command command, TArgument arg);
+        protected abstract void DoInitialise(TArgument argument, InitialiseProjectContext context);
         
-        protected string CreateEncodedSitecoreLicense(TContext si)
+        protected string CreateEncodedSitecoreLicense(TArgument si)
         {
             var licenseBytes = File.ReadAllBytes(si.LicensePath);
             using var licenseMemoryStream = new MemoryStream();

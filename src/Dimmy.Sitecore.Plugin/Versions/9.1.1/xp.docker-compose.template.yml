@@ -1,0 +1,82 @@
+#XM topology
+version: "2.4"
+
+services:
+  sql:
+    image: #{MsSql.Image}
+    volumes:
+      - .\data\sql:C:\Data
+    mem_limit: 2GB
+    ports:
+      - "#{Sitecore.SqlPort}:1433"
+    environment:
+      SA_PASSWORD: #{MsSql.SaPassword}
+      ACCEPT_EULA: "Y"
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "mssql"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+
+  solr:
+    image: #{Solr.Image}
+    volumes:
+      - .\data\solr:C:\Data
+    mem_limit: 1GB
+    ports:
+      - "#{Sitecore.SolrPort}:8983"
+    environment:
+      SOLR_LOG_LEVEL: INFO
+
+  cd:
+    image: #{Sitecore.CD.Image}
+    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"
+    ports:
+      - "44002:80"
+    environment:
+      SITECORE_LICENSE: #{Sitecore.License}
+      SITECORE_APPSETTINGS_ROLE:DEFINE: ContentDelivery
+      SITECORE_CONNECTIONSTRINGS_SECURITY: Data Source=sql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_WEB: Data Source=sql;Initial Catalog=Sitecore.Web;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_EXPERIENCEFORMS: Data Source=sql;Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_SOLR.SEARCH: http://solr:8983/solr
+      ENTRYPOINT_STDOUT_IIS_ACCESS_LOG_ENABLED: 'true'
+      ENTRYPOINT_STDOUT_IIS_ERROR_LOG_ENABLED: 'true'
+      ENTRYPOINT_STDOUT_SITECORE_LOG_ENABLED: 'true'
+    depends_on:
+      sql:
+        condition: service_healthy
+      solr:
+        condition: service_started
+
+  cm:
+    image: #{Sitecore.CM.Image}
+    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"
+    ports:
+      - "44001:80"
+    environment:
+      SITECORE_LICENSE: #{Sitecore.License}
+      SITECORE_APPSETTINGS_ROLE:DEFINE: ContentManagement, Indexing
+      SITECORE_CONNECTIONSTRINGS_CORE: Data Source=sql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_SECURITY: Data Source=sql;Initial Catalog=Sitecore.Core;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_MASTER: Data Source=sql;Initial Catalog=Sitecore.Master;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_WEB: Data Source=sql;Initial Catalog=Sitecore.Web;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_EXPERIENCEFORMS: Data Source=sql;Initial Catalog=Sitecore.ExperienceForms;User ID=sa;Password=#{MsSql.SaPassword}
+      SITECORE_CONNECTIONSTRINGS_SOLR.SEARCH: http://solr:8983/solr
+      SITECORE_APPSETTINGS_TELERIK.ASYNCUPLOAD.CONFIGURATIONENCRYPTIONKEY: #{Sitecore.TelerikEncryptionKey}
+      SITECORE_APPSETTINGS_TELERIK.UPLOAD.CONFIGURATIONHASHKEY: #{Sitecore.TelerikEncryptionKey}
+      SITECORE_APPSETTINGS_TELERIK.WEB.UI.DIALOGPARAMETERSENCRYPTIONKEY: #{Sitecore.TelerikEncryptionKey}
+      ENTRYPOINT_STDOUT_IIS_ACCESS_LOG_ENABLED: 'false'
+      ENTRYPOINT_STDOUT_IIS_ERROR_LOG_ENABLED: 'false'
+      ENTRYPOINT_STDOUT_SITECORE_LOG_ENABLED: 'true'
+    depends_on:
+      sql:
+        condition: service_healthy
+      solr:
+        condition: service_started
+
+networks:
+  default:
+    external:
+      name: nat

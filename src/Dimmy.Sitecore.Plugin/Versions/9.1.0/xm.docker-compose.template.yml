@@ -1,6 +1,39 @@
 version: "2.4"
 
 services:
+  traefik:
+    isolation: #{Traefik.Isolation}
+    image: #{Traefik.Image}
+    command:
+      - "--ping"
+      - "--api.insecure=true"
+      - "--providers.docker.endpoint=npipe:////./pipe/docker_engine"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.file.directory=C:/etc/traefik/config/dynamic"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+    ports:
+      - "8080:80"
+      - "443:443"
+      - "8079:8080"
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+    volumes:
+      - source: \\.\pipe\docker_engine
+        target: \\.\pipe\docker_engine
+        type: npipe
+      - ./traefik:C:/etc/traefik
+    depends_on:
+      cd:
+        condition: service_healthy
+      cm:
+        condition: service_healthy
+    labels:
+      dimmy.dev.project: true
+      dimmy.dev.project.name: "#{Project.Name}"
+      dimmy.dev.project.id: "#{Project.Id}"
+      dimmy.dev.project.role: "traefik"
+      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
   sql:
     image: #{MsSql.Image}
     volumes:
@@ -31,119 +64,6 @@ services:
       dimmy.dev.project.id: "#{Project.Id}"
       dimmy.dev.project.role: "solr"
       dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
-
-  xconnect:
-    image: #{Sitecore.XConnect.Image}
-    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\xconnect\\Development.ps1"
-    volumes:
-      - .\data\xconnect:C:\inetpub\wwwroot\App_Data\logs
-    mem_limit: 1GB
-    environment:
-      ENTRYPOINT_STDOUT_XCONNECT_LOG_ENABLED: 'true'
-      ENTRYPOINT_STDOUT_IIS_ACCESS_LOG_ENABLED: 'true'
-      ENTRYPOINT_STDOUT_IIS_ERROR_LOG_ENABLED: 'true'
-      SITECORE_LICENSE: #{Sitecore.License}
-      SITECORE_SITECORE:XCONNECT:COLLECTIONSEARCH:SERVICES:SOLR.SOLRREADERSETTINGS:OPTIONS:REQUIREHTTPS: 'false'
-      SITECORE_SITECORE:XCONNECT:SEARCHINDEXER:SERVICES:SOLR.SOLRWRITERSETTINGS:OPTIONS:REQUIREHTTPS: 'false'
-      SITECORE_CONNECTIONSTRINGS_MESSAGING: Data Source=sql;Database=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_PROCESSING.ENGINE.STORAGE: Data Source=sql;Database=Sitecore.ProcessingEngineStorage;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_REPORTING: Data Source=sql;Database=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_XDB.MARKETINGAUTOMATION: Data Source=sql;Database=Sitecore.MarketingAutomation;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_XDB.PROCESSING.POOLS: Data Source=sql;Database=Sitecore.Processing.Pools;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_XDB.REFERENCEDATA: Data Source=sql;Database=Sitecore.ReferenceData;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_COLLECTION: Data Source=sql;Database=Sitecore.Xdb.Collection.ShardMapManager;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_SOLRCORE: http://solr:8983/solr/sitecore_xdb
-    depends_on:
-      sql:
-        condition: service_healthy
-      solr:
-        condition: service_started
-    labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "xconnect"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
-
-  xconnect-automationengine:
-    image: #{Sitecore.XConnectAutomationEngine.Image}
-    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\worker\\Development.ps1"
-    volumes:
-      - .\data\xconnect-automationengine:C:\worker\App_Data\logs
-    mem_limit: 500MB
-    environment:
-      SITECORE_LICENSE: #{Sitecore.License}
-      SITECORE_CONNECTIONSTRINGS_XCONNECT.COLLECTION: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_XDB.MARKETINGAUTOMATION: Data Source=sql;Database=Sitecore.MarketingAutomation;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_XDB.REFERENCEDATA: Data Source=sql;Database=Sitecore.ReferenceData;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_MESSAGING: Data Source=sql;Database=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
-    depends_on:
-      sql:
-        condition: service_healthy
-      xconnect:
-        condition: service_started
-    labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "xconnect-automationengine"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
-
-  xconnect-indexworker:
-    image: #{Sitecore.XConnectIndexWorker.Image}
-    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\worker\\Development.ps1"
-    volumes:
-      - .\data\xconnect-indexworker:C:\worker\App_Data\logs
-    mem_limit: 500MB
-    environment:
-      SITECORE_LICENSE: #{Sitecore.License}
-      SITECORE_CONNECTIONSTRINGS_COLLECTION: Data Source=sql;Initial Catalog=Sitecore.Xdb.Collection.ShardMapManager;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_SOLRCORE: http://solr:8983/solr/sitecore_xdb
-      SITECORE_SITECORE:XCONNECT:SEARCHINDEXER:SERVICES:SOLR.SOLRREADERSETTINGS:OPTIONS:REQUIREHTTPS: 'false'
-      SITECORE_SITECORE:XCONNECT:SEARCHINDEXER:SERVICES:SOLR.SOLRWRITERSETTINGS:OPTIONS:REQUIREHTTPS: 'false'
-    depends_on:
-      sql:
-        condition: service_healthy
-      solr:
-        condition: service_started
-    labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "xconnect-indexworker"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
-
-  xconnect-processingengine:
-    image: #{Sitecore.XConnectProcessingEngine.Image}
-    entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\worker\\Development.ps1"
-    volumes:
-      - .\data\xconnect-processingengine:C:\worker\App_Data\logs
-    mem_limit: 500MB
-    restart: unless-stopped
-    environment:
-      SITECORE_LICENSE: #{Sitecore.License}
-      SITECORE_CONNECTIONSTRINGS_PROCESSING.ENGINE.STORAGE: Data Source=sql;Database=Sitecore.Processing.Engine.Storage;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_PROCESSING.ENGINE.TASKS: Data Source=sql;Database=Sitecore.Processing.Engine.Tasks;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_PROCESSING.WEBAPI.BLOB: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_PROCESSING.WEBAPI.TABLE: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_XCONNECT.COLLECTION: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_XCONNECT.CONFIGURATION: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_XCONNECT.SEARCH: http://xconnect
-      SITECORE_CONNECTIONSTRINGS_MESSAGING: Data Source=sql;Database=Sitecore.Messaging;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_CONNECTIONSTRINGS_REPORTING: Data Source=sql;Database=Sitecore.Reporting;User ID=sa;Password=#{MsSql.SaPassword}
-      SITECORE_SETTINGS:SERILOG:MINIMUMLEVEL:DEFAULT: Information
-    depends_on:
-      sql:
-        condition: service_healthy
-      xconnect:
-        condition: service_started
-    labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "xconnect-processingengine"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
-
   cd:
     image: #{Sitecore.CD.Image}
     entrypoint: powershell.exe -Command "& C:\\tools\\entrypoints\\iis\\Development.ps1"
@@ -167,14 +87,15 @@ services:
         condition: service_healthy
       solr:
         condition: service_started
-      xconnect:
-        condition: service_started
     labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "cd"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.cd.entrypoints=web"
+      - "traefik.http.routers.cd.rule=Host(`#{Sitecore.Cd.HostName}`)"
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=#{Project.Name}"
+      - "dimmy.dev.project.id=#{Project.Id}"
+      - "dimmy.dev.project.role=cd"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"
 
   cm:
     image: #{Sitecore.CM.Image}
@@ -210,11 +131,16 @@ services:
         condition: service_healthy
       solr:
         condition: service_started
-      xconnect:
-        condition: service_started
     labels:
-      dimmy.dev.project: true
-      dimmy.dev.project.name: "#{Project.Name}"
-      dimmy.dev.project.id: "#{Project.Id}"
-      dimmy.dev.project.role: "cm"
-      dimmy.dev.project.workingpath: "#{Project.WorkingPath}"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.force-STS-Header.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.force-STS-Header.headers.stsSeconds=31536000"
+      - "traefik.http.routers.cm-secure.entrypoints=websecure"
+      - "traefik.http.routers.cm-secure.rule=Host(`#{Sitecore.Cm.HostName}`)"
+      - "traefik.http.routers.cm-secure.tls=true"
+      - "traefik.http.routers.cm-secure.middlewares=force-STS-Header"
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=#{Project.Name}"
+      - "dimmy.dev.project.id=#{Project.Id}"
+      - "dimmy.dev.project.role=cm"
+      - "dimmy.dev.project.workingpath=#{Project.WorkingPath}"

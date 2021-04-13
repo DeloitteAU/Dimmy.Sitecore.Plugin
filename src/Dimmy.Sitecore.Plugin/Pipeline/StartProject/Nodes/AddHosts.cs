@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Dimmy.Engine.Commands;
-using Dimmy.Engine.Commands.HostSystem;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
+using Dimmy.Engine.Services.Hosts;
 using SharpHostsFile;
 
-namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
+namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
 {
     public class AddHosts : Node<IStartProjectContext>
     {
-        private readonly ICommandHandler<AddHostsFileMapEntries> _addHostCommandHandler;
+        private readonly IHostsFileService _hostsFileService;
 
-        public AddHosts(ICommandHandler<AddHostsFileMapEntries> addHostCommandHandler)
+        public AddHosts(IHostsFileService hostsFileService)
         {
-            _addHostCommandHandler = addHostCommandHandler;
+            _hostsFileService = hostsFileService;
         }
         public override void DoExecute(IStartProjectContext input)
         {
@@ -23,6 +22,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
             foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)
             {
                 if (!service.Labels.ContainsKey("traefik.enable")) continue;
+                
                 var host = service
                     .Labels
                     .Single(l => l.Key.EndsWith("rule"))
@@ -40,13 +40,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Pipeline.StartProject.Nodes
                 hostsFileEntries.Add(hostsFileMapEntry);
             }
             
-            
-            _addHostCommandHandler.Handle(new AddHostsFileMapEntries
-            {
-                HostsFileMapEntries = hostsFileEntries
-            });
+            _hostsFileService.AddHostsFileEntry(hostsFileEntries);
         }
-
-    
     }
 }
