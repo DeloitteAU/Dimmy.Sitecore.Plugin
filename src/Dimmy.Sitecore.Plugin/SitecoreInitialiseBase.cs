@@ -51,7 +51,6 @@ namespace Dimmy.Sitecore.Plugin
         public override void HydrateCommand(Command command)
         {
             var arg = new TArgument();
-
             
             command.AddOption(new Option<string>(
                 "--license-path", 
@@ -83,7 +82,7 @@ namespace Dimmy.Sitecore.Plugin
                 $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));
             
             DoHydrateCommand(command, arg);
-            command.Handler = CommandHandler.Create((TArgument arg) => Initialise(arg));
+            command.Handler = CommandHandler.Create((TArgument a) => Initialise(a));
         }
 
         private void Initialise(TArgument argument)

@@ -37,6 +37,9 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
 
         protected override void DoInitialise(SitecoreInitialiseArgument argument, InitialiseProjectContext context)
         {
+            argument.Registries.Add("sxp", "scr.sitecore.com/sxp");
+            argument.Registries.Add("sxc", "scr.sitecore.com/sxc");
+            
             var identityCertificatePassword = NonceService.Generate();
 
             var identityCertificate = _certificateService.CreateSelfSignedCertificate("dimmy.sitecore.plugin", "localhost");

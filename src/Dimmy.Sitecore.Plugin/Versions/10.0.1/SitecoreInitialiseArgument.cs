@@ -30,8 +30,6 @@
         public string XcBraintreePrivateKey { get; set; }
         public SitecoreInitialiseArgument()
         {
-            Registries.Add("sxp", "scr.sitecore.com/sxp");
-            Registries.Add("sxc", "scr.sitecore.com/sxc");
             Topology = "xm1";
             WindowsVersion = "ltsc2019";
         }
