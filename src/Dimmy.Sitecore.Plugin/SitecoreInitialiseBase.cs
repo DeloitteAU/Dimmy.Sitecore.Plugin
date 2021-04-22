@@ -104,14 +104,25 @@ namespace Dimmy.Sitecore.Plugin
             context.WorkingPath = argument.WorkingPath;
             context.SourceCodePath = argument.SourceCodePath;
             context.Name = argument.Name;
+            
             if (!string.IsNullOrEmpty(argument.DockerComposeTemplate))
             {
-                context.DockerComposeTemplatePath = argument.DockerComposeTemplate;
+                context.DockerComposeFilePath = argument.DockerComposeTemplate;
             }
             else
             {
-                context.DockerComposeTemplatePath =
-                    Path.Join(TemplatePath, $"{argument.Topology}.docker-compose.template.yml");
+                context.DockerComposeFilePath =
+                    Path.Join(TemplatePath, $"{argument.Topology}.docker-compose.yml");
+            }
+            
+            if (!string.IsNullOrEmpty(argument.DockerComposeTemplate))
+            {
+                context.EnvironmentTemplateFilePath = argument.EnvironmentTemplate;
+            }
+            else
+            {
+                context.EnvironmentTemplateFilePath =
+                    Path.Join(TemplatePath, $"{argument.Topology}.template.env");
             }
 
             DoInitialise(argument, context);

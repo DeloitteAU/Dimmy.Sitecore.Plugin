@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
 using Dimmy.Engine.Services.Hosts;
@@ -16,7 +17,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
         {
             _hostsFileService = hostsFileService;
         }
-        public override void DoExecute(IStartProjectContext input)
+        public override async Task DoExecute(IStartProjectContext input)
         {
             var hostsFileEntries = new List<HostsFileEntryBase>();
             foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)

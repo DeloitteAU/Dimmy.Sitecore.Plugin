@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
 using Dimmy.Engine.Services;
@@ -16,7 +17,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
     {
         private readonly ICertificateService _certificateService;
 
-        public override void DoExecute(IStartProjectContext input)
+        public override async Task DoExecute(IStartProjectContext input)
         {
             var traefikCertsPath = Path.Combine(input.WorkingPath, "traefik", "certs");
             if (!Directory.Exists(traefikCertsPath))
@@ -50,7 +51,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
             
             var traefikConfigYaml = serializer.Serialize(traefikConfig);
 
-            File.WriteAllText(
+            await File.WriteAllTextAsync(
                 Path.Combine(traefikConfigPath, "certs_config.yaml"),
                 traefikConfigYaml);
         }

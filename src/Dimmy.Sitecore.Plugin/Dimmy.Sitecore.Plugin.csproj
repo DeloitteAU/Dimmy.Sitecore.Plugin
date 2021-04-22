@@ -58,6 +58,14 @@
 	  <Content Include="Versions\10.0.0\xc0.docker-compose.template.yml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <None Remove="Versions\10.0.1\xm1.docker-compose.yml" />
+	  <Content Include="Versions\10.0.1\xm1.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.0.1\xm1.template.env" />
+	  <Content Include="Versions\10.0.1\xm1.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Dimmy.Cli.Commands.Project.SubCommands;
-using Dimmy.Engine.Pipelines.InitialiseProject;
 
 namespace Dimmy.Sitecore.Plugin
 {
-    public class SitecoreInitialiseArgument: InitialiseArgument
+    public abstract class SitecoreInitialiseArgument: InitialiseArgument
     {
         public string LicensePath { get; set; }
         
