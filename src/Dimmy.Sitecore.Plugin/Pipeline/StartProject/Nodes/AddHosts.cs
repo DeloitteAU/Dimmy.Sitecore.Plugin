@@ -9,7 +9,7 @@ using SharpHostsFile;
 
 namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
 {
-    public class AddHosts : Node<IStartProjectContext>
+    public class AddHosts : SitecoreStartNode
     {
         private readonly IHostsFileService _hostsFileService;
 
@@ -29,10 +29,8 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
                     .Single(l => l.Key.EndsWith("rule"))
                     .Value;
 
-                var hostName = host
-                    .Replace("Host(`", "")
-                    .Replace("`)", "");
-                
+                var hostName = GetHostNameFromEnvironmentalVariables(host, input);
+
                 var hostsFileMapEntry = new HostsFileMapEntry(
                     IPAddress.Loopback,
                     hostName,
@@ -43,5 +41,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
             
             _hostsFileService.AddHostsFileEntry(hostsFileEntries);
         }
+
+        
     }
 }

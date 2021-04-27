@@ -13,7 +13,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
 {
-    public class CreateContainerCerts : Node<IStartProjectContext>
+    public class CreateContainerCerts : SitecoreStartNode
     {
         private readonly ICertificateService _certificateService;
 
@@ -33,9 +33,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
                     .Single(l => l.Key.EndsWith("rule"))
                     .Value;
 
-                var hostName = host
-                    .Replace("Host(`", "")
-                    .Replace("`)", "");
+                var hostName = GetHostNameFromEnvironmentalVariables(host, input);
 
                 var certificate = CreateCert(hostName, traefikCertsPath);
                 traefikConfig.Tls.Certificates.Add(certificate);
@@ -63,6 +61,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
 
         private Certificate CreateCert(string hostName, string traefikCertsPath)
         {
+            
             var certsPath = Path.Combine(traefikCertsPath, $"{hostName}");
 
             var certKeyPath = $"{certsPath}.key";

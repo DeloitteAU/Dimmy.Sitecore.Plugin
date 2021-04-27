@@ -36,12 +36,12 @@ services:
   redis:
     isolation: ${ISOLATION}
     image: ${SITECORE_DOCKER_REGISTRY}sitecore-redis:${SITECORE_VERSION}
-  labels:
-    - "dimmy.dev.project=true"
-    - "dimmy.dev.project.name=${PROJECT_NAME}"
-    - "dimmy.dev.project.id=${PROJECT_ID}"
-    - "dimmy.dev.project.role=redis"
-    - "dimmy.dev.project.workingpath=${PROJECT_WORKINGPATH}"
+    labels:
+      - "dimmy.dev.project=true"
+      - "dimmy.dev.project.name=${PROJECT_NAME}"
+      - "dimmy.dev.project.id=${PROJECT_ID}"
+      - "dimmy.dev.project.role=redis"
+      - "dimmy.dev.project.workingpath=${PROJECT_WORKINGPATH}"
   mssql:
     isolation: ${ISOLATION}
     image: ${SITECORE_DOCKER_REGISTRY}sitecore-xm1-mssql:${SITECORE_VERSION}
