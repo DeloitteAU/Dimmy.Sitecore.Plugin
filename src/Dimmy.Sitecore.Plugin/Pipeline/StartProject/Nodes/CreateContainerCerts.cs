@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.StartProject;
 using Dimmy.Engine.Services;
+using Dimmy.Sitecore.Plugin.Models.Traefik;
 using Dimmy.Sitecore.Plugin.Versions._10._0._0;
-using Dimmy.Sitecore.Plugin.Versions._10._0._0.Models.Traefik;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 

@@ -1,4 +1,4 @@
-﻿namespace Dimmy.Sitecore.Plugin.Versions._10._0._0.Models.Traefik
+﻿namespace Dimmy.Sitecore.Plugin.Models.Traefik
 {
     public class Config
     {
