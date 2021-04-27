@@ -37,9 +37,6 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
 
         protected override void DoInitialise(SitecoreInitialiseArgument argument, InitialiseProjectContext context)
         {
-            argument.Registries.Add("sxp", "scr.sitecore.com/sxp");
-            argument.Registries.Add("sxc", "scr.sitecore.com/sxc");
-            
             var identityCertificatePassword = NonceService.Generate();
 
             var identityCertificate = _certificateService.CreateSelfSignedCertificate("dimmy.sitecore.plugin", "localhost");
@@ -54,78 +51,6 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
             context.PrivateVariables.Add("Sitecore.Rep.ApiKey", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Xc.Engine.Authoring.ClientId", NonceService.Generate());
 
-            context.PublicVariables.Add("Traefik.Image", argument.TraefikIImage);
-
-            context.PublicVariables.Add("Redis.Image",
-                $"{argument.Registries["sxp"]}/sitecore-redis:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("MsSql.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-mssql:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Solr.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-solr:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.Id.Image",
-                $"{argument.Registries["sxp"]}/sitecore-id:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.Id.HostName", argument.IdHostName);
-
-            context.PublicVariables.Add("Sitecore.Cd.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-cd:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.Cd.HostName", argument.CdHostName);
-
-            context.PublicVariables.Add("Sitecore.Cm.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-cm:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.Cm.HostName", argument.CmHostName);
-
-            context.PublicVariables.Add("Sitecore.Prc.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-prc:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.Rep.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-rep:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XConnect.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xconnect:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBCollection.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbcollection:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBSearch.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbsearch:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBAutomation.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbautomation:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBAutomationRpt.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbautomationrpt:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.CortexProcessing.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-cortexprocessing:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.CortexReporting.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-cortexreporting:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XBDRefData.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbrefdata:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBSearchWorker.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbsearchworker:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.XDBAutomationWorker.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-xdbautomationworker:10.0.0-{argument.WindowsVersion}");
-
-            context.PublicVariables.Add("Sitecore.CortexProcessingWorker.Image",
-                $"{argument.Registries["sxp"]}/sitecore-{argument.Topology}-cortexprocessingworker:10.0.0-{argument.WindowsVersion}");
-
-            // Commerce
-
-            context.PublicVariables.Add("Sitecore.Xc.BizFx.Image",
-                $"{argument.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.XC.BizFx.HostName", argument.XcBizFxHostName);
-
-            context.PublicVariables.Add("Sitecore.Xc.EngineAuthoring.Image",
-                $"{argument.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.XC.EngineAuthoring.HostName", argument.XcEngineAuthoringHostName);
-
             context.PublicVariables.Add("Sitecore.Xc.GlobalTrustedConnection",
                 argument.XcGlobalTrustedConnection.ToString());
             context.PublicVariables.Add("Sitecore.Xc.SharedTrustedConnection",
@@ -133,19 +58,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
 
             context.PublicVariables.Add("Sitecore.Xc.Engine.GlobalDatabaseName", argument.XcEngineGlobalDatabaseName);
             context.PublicVariables.Add("Sitecore.Xc.Engine.SharedDatabaseName", argument.XcEngineSharedDatabaseName);
-
-            context.PublicVariables.Add("Sitecore.Xc.EngineShops.Image",
-                $"{argument.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.XC.EngineShops.HostName", argument.XcEngineShopsHostName);
-
-            context.PublicVariables.Add("Sitecore.Xc.EngineMinions.Image",
-                $"{argument.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.XC.EngineMinions.HostName", argument.XcEngineMinionsHostName);
-
-            context.PublicVariables.Add("Sitecore.Xc.EngineOps.Image",
-                $"{argument.Registries["sxc"]}/sitecore-xc-engine:10.0.0-{argument.WindowsVersion}");
-            context.PublicVariables.Add("Sitecore.XC.EngineOps.HostName", argument.XcEngineOpsHostName);
-
+            
             context.PublicVariables.Add("Sitecore.Xc.Braintree.Environment", argument.XcBraintreeEnvironment);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.MerchantId", argument.XcBraintreeMerchantId);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.PublicKey", argument.XcBraintreePublicKey);

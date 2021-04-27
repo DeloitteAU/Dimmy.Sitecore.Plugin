@@ -7,8 +7,6 @@ namespace Dimmy.Sitecore.Plugin
     {
         public string LicensePath { get; set; }
         
-        public Dictionary<string, string> Registries { get; set; } = new Dictionary<string, string>();
-        
         public string Registry { get; set; }
         
         public string Topology { get; set; }

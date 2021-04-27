@@ -33,7 +33,7 @@ namespace Dimmy.Sitecore.Plugin
         {
             get
             {
-                var templates = Directory.GetFiles(TemplatePath);
+                var templates = Directory.GetFiles(TemplatePath, "*.env");
 
                 foreach (var template in templates)
                 {
@@ -61,22 +61,7 @@ namespace Dimmy.Sitecore.Plugin
                 "--registry", 
                 "registry to pull docker images from"));
             
-            command.AddOption(new Option<Dictionary<string, string>>("--registries", parseArgument: result =>
-            {
-                if (result.Argument.Name == "registry")
-                {
-                    return new Dictionary<string, string>
-                    {
-                        {"defult", result.Tokens.First().Value}
-                    };
-                }
-                return result
-                    .Tokens
-                    .Select(t => t.Value.Split('='))
-                    .ToDictionary(p => p[0], p => p[1]);
-            }, description: "registry to pull docker images from"));
             
-
             command.AddOption(new Option<string>(
                 "--topology", 
                 $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));

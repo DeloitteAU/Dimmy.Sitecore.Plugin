@@ -36,6 +36,22 @@
 	  <Content Include="Versions\10.0.1\xm1.template.env">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <None Remove="Versions\10.0.1\xp0.docker-compose.yml" />
+	  <Content Include="Versions\10.0.1\xp0.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.0.1\xp0.template.env" />
+	  <Content Include="Versions\10.0.1\xp0.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.0.1\xp1.docker-compose.yml" />
+	  <Content Include="Versions\10.0.1\xp1.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.0.1\xp1.template.env" />
+	  <Content Include="Versions\10.0.1\xp1.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
