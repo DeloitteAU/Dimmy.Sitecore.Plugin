@@ -25,34 +25,7 @@
 	  <None Remove="TopologyTemplates\docker-compose.xp.yml.template" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="TopologyTemplates\docker-compose.xp.template.yml" />
-	  <None Remove="Versions\10.0.0\xc0.docker-compose.template.yml" />
-	  <None Remove="Versions\10.0.1\xm1.docker-compose.yml" />
-	  <Content Include="Versions\10.0.1\xm1.docker-compose.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <None Remove="Versions\10.0.1\xm1.template.env" />
-	  <Content Include="Versions\10.0.1\xm1.template.env">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <None Remove="Versions\10.0.1\xp0.docker-compose.yml" />
-	  <Content Include="Versions\10.0.1\xp0.docker-compose.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <None Remove="Versions\10.0.1\xp0.template.env" />
-	  <Content Include="Versions\10.0.1\xp0.template.env">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <None Remove="Versions\10.0.1\xp1.docker-compose.yml" />
-	  <Content Include="Versions\10.0.1\xp1.docker-compose.yml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <None Remove="Versions\10.0.1\xp1.template.env" />
-	  <Content Include="Versions\10.0.1\xp1.template.env">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
+	
 
 	<ItemGroup>
 	  <Folder Include="Properties\" />
@@ -60,6 +33,37 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Dimmy\src\Dimmy.Cli\Dimmy.Cli.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Versions\10.1.0\xm1.docker-compose.yml" />
+	  <Content Include="Versions\10.1.0\xm1.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\xm1.template.env" />
+	  <Content Include="Versions\10.1.0\xm1.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\xp0.docker-compose.yml" />
+	  <Content Include="Versions\10.1.0\xp0.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\xp0.template.env" />
+	  <Content Include="Versions\10.1.0\xp0.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\xp1.docker-compose.yml" />
+	  <Content Include="Versions\10.1.0\xp1.docker-compose.yml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\xp1.template.env" />
+	  <Content Include="Versions\10.1.0\xp1.template.env">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <None Remove="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.dll" />
+	  <Content Include="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.dll">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 

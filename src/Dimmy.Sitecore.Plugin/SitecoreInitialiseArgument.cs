@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Dimmy.Cli.Commands.Project.SubCommands;
+﻿using Dimmy.Cli.Commands.Project.SubCommands;
 
 namespace Dimmy.Sitecore.Plugin
 {

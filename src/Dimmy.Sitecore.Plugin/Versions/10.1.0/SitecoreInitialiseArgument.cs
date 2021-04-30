@@ -1,4 +1,4 @@
-﻿namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
+﻿namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
 {
     public class SitecoreInitialiseArgument : Sitecore.Plugin.SitecoreInitialiseArgument
     {

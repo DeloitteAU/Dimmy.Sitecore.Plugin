@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Engine.Pipelines;
@@ -60,8 +59,7 @@ namespace Dimmy.Sitecore.Plugin
             command.AddOption(new Option<string>(
                 "--registry", 
                 "registry to pull docker images from"));
-            
-            
+
             command.AddOption(new Option<string>(
                 "--topology", 
                 $"The Sitecore topology. Defaults to {arg.Topology}. Options: \n {string.Join('\n', Topologies)}"));

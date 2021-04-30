@@ -5,15 +5,15 @@ using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.InitialiseProject;
 using Dimmy.Engine.Services;
 
-namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
+namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
 {
     public class SitecoreInitialise : SitecoreInitialiseBase<SitecoreInitialiseArgument>
     {
         private readonly ICertificateService _certificateService;
-        public override string Name => "sitecore-10.0.1";
-        public override string Description => "Initialise a Sitecore 10.0.1 project.";
+        public override string Name => "sitecore-10.1.0";
+        public override string Description => "Initialise a Sitecore 10.1.0 project.";
 
-        protected override string Version => "10.0.1";
+        protected override string Version => "10.1.0";
 
         public SitecoreInitialise(
             ICertificateService certificateService,
@@ -51,6 +51,13 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._0._1
             context.PrivateVariables.Add("Sitecore.Rep.ApiKey", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Xc.Engine.Authoring.ClientId", NonceService.Generate());
 
+            
+            context.PublicVariables.Add("Sitecore.Id.HostName", argument.IdHostName);
+            context.PublicVariables.Add("Sitecore.Cd.HostName", argument.CdHostName);
+            context.PublicVariables.Add("Sitecore.Cm.HostName", argument.CmHostName);
+            
+            context.PublicVariables.Add("WindowsVersion", argument.WindowsVersion);
+            
             context.PublicVariables.Add("Sitecore.Xc.GlobalTrustedConnection",
                 argument.XcGlobalTrustedConnection.ToString());
             context.PublicVariables.Add("Sitecore.Xc.SharedTrustedConnection",

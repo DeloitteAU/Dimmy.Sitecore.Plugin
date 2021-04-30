@@ -126,6 +126,10 @@ services:
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
+    volumes:
+      - type: bind
+        source: .\build
+        target: c:\${DEVELOPMENTHELPER_HOOK_NAME}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cd-secure.entrypoints=websecure"
@@ -167,6 +171,10 @@ services:
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
+    volumes:
+      - type: bind
+        source: .\build
+        target: c:\${DEVELOPMENTHELPER_HOOK_NAME}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.force-STS-Header.headers.forceSTSHeader=true"
