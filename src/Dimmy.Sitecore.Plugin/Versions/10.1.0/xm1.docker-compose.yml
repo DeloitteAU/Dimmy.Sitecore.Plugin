@@ -123,13 +123,17 @@ services:
       Sitecore_ConnectionStrings_Redis.Sessions: redis:6379,ssl=False,abortConnect=False
       Sitecore_License: ${SITECORE_LICENSE}
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
+      DEVELOPMENTHELPER_HOOK_NAME: ${DEVELOPMENTHELPER_HOOK_NAME}
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
     volumes:
       - type: bind
         source: .\build
-        target: c:\${DEVELOPMENTHELPER_HOOK_NAME}
+        target: c:\inetpub\wwwroot\${DEVELOPMENTHELPER_HOOK_NAME}
+      - type: bind
+        source: .\logs\cd
+        target: c:\inetpub\wwwroot\App_Data\logs
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cd-secure.entrypoints=websecure"
@@ -168,13 +172,17 @@ services:
       Sitecore_Identity_Server_CallbackAuthority: https://${CM_HOST}
       Sitecore_Identity_Server_Require_Https: "false"
       SOLR_CORE_PREFIX_NAME: ${SOLR_CORE_PREFIX_NAME}
+      DEVELOPMENTHELPER_HOOK_NAME: ${DEVELOPMENTHELPER_HOOK_NAME}
     healthcheck:
       test: ["CMD", "powershell", "-command", "C:/Healthchecks/Healthcheck.ps1"]
       timeout: 300s
     volumes:
       - type: bind
         source: .\build
-        target: c:\${DEVELOPMENTHELPER_HOOK_NAME}
+        target: c:\inetpub\wwwroot\${DEVELOPMENTHELPER_HOOK_NAME}
+      - type: bind
+        source: .\logs\cm
+        target: c:\inetpub\wwwroot\App_Data\logs
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.force-STS-Header.headers.forceSTSHeader=true"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,13 +17,14 @@ namespace Dimmy.DevelopmentHelper._10._1._0
 {
     public static class Initialiser
     {
-        private const string DevelopmentPerformanceConfigResourceName = "Dimmy.DevelopmentHelper._9._3._0.DevelopmentPerformance.config";
-        private const string WorkCompleteResourceName = "Dimmy.DevelopmentHelper._9._3._0.workcomplete";
+        private const string DevelopmentPerformanceConfigResourceName = "Dimmy.DevelopmentHelper._10._1._0.DevelopmentPerformance.config";
+        private const string WorkCompleteResourceName = "Dimmy.DevelopmentHelper._10._1._0.workcomplete";
 
         private static readonly string HookBindMountBinPath;
         private static readonly IReadOnlyDictionary<AssemblyName, Assembly> AssemblyDictionary;
         private static readonly string HookName;
         private static readonly string WorkCompletePath;
+        private static Configuration _config;
 
         static Initialiser()
         {
@@ -47,12 +49,16 @@ namespace Dimmy.DevelopmentHelper._10._1._0
         {
             if (WorkComplete()) 
                 return;
-
+            
+            _config = WebConfigurationManager.OpenWebConfiguration("~");
+            
             ApplyWebConfigChanges();
             AddDevelopmentPerformanceConfigToSitecoreIncludes();
             AddHookLayer();
             LoadDeploymentHookAssemblies();
             SetWorkComplete();
+            
+            _config.Save();
         }
 
         private static void SetWorkComplete()
@@ -77,29 +83,40 @@ namespace Dimmy.DevelopmentHelper._10._1._0
 
         private static string GetManifestResourceString(string manifestResourceStreamName)
         {
-            using (var stream = typeof(Initialiser).Assembly.GetManifestResourceStream(manifestResourceStreamName))
+            try
             {
-                if (stream == null)
-                {
-                    throw new InvalidOperationException("Could not load manifest resource stream.");
-                }
 
-                using (var reader = new StreamReader(stream))
+
+                using (var stream = typeof(Initialiser).Assembly.GetManifestResourceStream(manifestResourceStreamName))
                 {
-                    return reader.ReadToEnd();
+                    if (stream == null)
+                    {
+                        throw new InvalidOperationException("Could not load manifest resource stream.");
+                    }
+
+                    using (var reader = new StreamReader(stream))
+                    {
+                        return reader.ReadToEnd();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                var objAssembly = typeof(Initialiser).Assembly;
+
+                var strResourceNames = objAssembly.GetManifestResourceNames();
+                throw new Exception("Resource names:" + string.Join(" ", strResourceNames), e);
             }
         }
 
         private static void ApplyWebConfigChanges()
         {
-            var config = WebConfigurationManager.OpenWebConfiguration("~");
-            var section = config.GetSectionGroup("system.web")?.Sections["compilation"];
+            var section = _config.GetSectionGroup("system.web")?.Sections["compilation"];
 
             if (!(section is CompilationSection compilationSection) || compilationSection.OptimizeCompilations) return;
 
             compilationSection.OptimizeCompilations = true;
-            config.Save();
+            
         }
 
         private static bool WorkComplete()
@@ -120,13 +137,13 @@ namespace Dimmy.DevelopmentHelper._10._1._0
 
             if (!(configurationLayerProvider is DefaultConfigurationLayerProvider defaultConfigurationLayerProvider)) return;
 
-            var ddApplicationLayer = new DefaultConfigurationLayer(HookName, $"{HookName}/App_Config/Include/");
+            var applicationLayer = new DefaultConfigurationLayer(HookName, $"{HookName}/App_Config/Include/");
 
-            AddLayer("Foundation", ddApplicationLayer);
-            AddLayer("Feature", ddApplicationLayer);
-            AddLayer("Project", ddApplicationLayer);
+            AddLayer("Foundation", applicationLayer);
+            AddLayer("Feature", applicationLayer);
+            AddLayer("Project", applicationLayer);
 
-            defaultConfigurationLayerProvider.AddLayer(ddApplicationLayer);
+            defaultConfigurationLayerProvider.AddLayer(applicationLayer);
             providerHelper.SaveConfigurationProvider(configurationLayerProvider);
         }
 
@@ -143,6 +160,10 @@ namespace Dimmy.DevelopmentHelper._10._1._0
 
         private static void LoadDeploymentHookAssemblies()
         {
+
+            var section = _config.GetSectionGroup("runtime");
+
+            
             if(HookBindMountBinPath == null)
                 return;
 

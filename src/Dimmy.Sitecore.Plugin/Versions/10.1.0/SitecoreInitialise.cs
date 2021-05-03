@@ -43,7 +43,9 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
 
             var x509IdentityCertificate2Export = identityCertificate.Export(X509ContentType.Pfx, identityCertificatePassword);
             var x509IdentityCertificate2Base64String = Convert.ToBase64String(x509IdentityCertificate2Export);
-
+            
+            context.PublicVariables.Add("DevelopmentHelper.HookName", argument.DevelopmentHelperHookName);
+            
             context.PrivateVariables.Add("Sitecore.AdminPassword", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Id.Secret", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Id.CertificatePassword", identityCertificatePassword);
@@ -70,6 +72,9 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
             context.PublicVariables.Add("Sitecore.Xc.Braintree.MerchantId", argument.XcBraintreeMerchantId);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.PublicKey", argument.XcBraintreePublicKey);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.PrivateKey", argument.XcBraintreePrivateKey);
+            
+            
+            
         }
     }
 }

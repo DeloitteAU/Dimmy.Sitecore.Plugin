@@ -2,6 +2,7 @@
 {
     public class SitecoreInitialiseArgument : Sitecore.Plugin.SitecoreInitialiseArgument
     {
+        public string DevelopmentHelperHookName { get; set; } = "dimmy";
         public string CdHostName { get; set; } = "xm1cd.101.localhost";
         public string CmHostName { get; set; } = "xm1cm.101.localhost";
         public string IdHostName { get; set; } = "xm1id.101.localhost";
