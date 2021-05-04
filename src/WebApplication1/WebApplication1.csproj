@@ -123,6 +123,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="FooBar.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -130,6 +131,7 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="packages.config" />
+        <None Include="Web.config" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="Views\HelloWorld.cshtml" />

@@ -1,1 +1,37 @@
+@{
+    var t = AppDomain.CurrentDomain.GetAssemblies();
+
+}
+
 HELLO WORLD
+
+<div>
+    @AppDomain.CurrentDomain.BaseDirectory
+</div>
+
+<div>
+    @* @WebApplication1.FooBar.foo *@
+</div>
+
+<div>
+    <ul>
+        @foreach (var a in t)
+        {
+            <li>
+                @a.FullName - @a.IsDynamic
+            </li>
+        }
+    </ul>
+</div>
+
+<div>
+    @AppDomain.CurrentDomain.SetupInformation.PrivateBinPath
+</div>
+
+<div>
+    @AppDomain.CurrentDomain.SetupInformation.PrivateBinPathProbe
+</div>
+
+<div>
+    @AppDomain.CurrentDomain.GetData("PRIVATE_BINPATH")
+</div>

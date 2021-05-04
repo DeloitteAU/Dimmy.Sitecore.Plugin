@@ -64,10 +64,6 @@
 	  <Content Include="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <None Remove="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.pdb" />
-	  <Content Include="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.pdb">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	  <None Remove="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1" />
 	  <Content Include="Versions\10.1.0\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

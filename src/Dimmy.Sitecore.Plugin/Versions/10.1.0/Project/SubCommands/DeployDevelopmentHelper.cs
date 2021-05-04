@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -48,6 +49,9 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0.Project.SubCommands
 
         public override void CommandAction(DeployDevelopmentHelperArgument arg)
         {
+            if (string.IsNullOrEmpty(arg.WorkingPath))
+                arg.WorkingPath = Path.GetFullPath(Environment.CurrentDirectory);
+            
             var runningProject = _projectService.ResolveRunningProject(arg);
             
             var cd = runningProject.Services.Single(r => r.Name == "cd");
@@ -81,8 +85,10 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0.Project.SubCommands
                 ContainerId = cm.ContainerId
             });
 
+            
+            
             _dockerService
-                .RunPowershellInContainer(cd.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1").Wait();
+                 .RunPowershellInContainer(cd.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1").Wait();
             _dockerService
                 .RunPowershellInContainer(cm.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1").Wait();
         }

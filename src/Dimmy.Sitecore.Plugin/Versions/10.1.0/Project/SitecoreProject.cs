@@ -12,8 +12,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0.Project
         {
             _sitecoreProjectSubCommands = sitecoreProjectSubCommands;
         }
-        
-       
+
         public override void CommandAction(SitecoreProjectArgument arg)
         {
             
@@ -21,7 +20,7 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0.Project
 
         public override Command BuildCommand()
         {
-            var command = new Command("sitecore-10.0.0", "Command to interaction with Sitecore 10.0.0 ");
+            var command = new Command("sitecore-10.1.0", "Command to interaction with Sitecore 10.1.0 ");
             AddSubCommands(command, _sitecoreProjectSubCommands);
             return command;
         }

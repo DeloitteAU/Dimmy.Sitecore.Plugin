@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -21,7 +19,6 @@ namespace Dimmy.DevelopmentHelper._10._1._0
         private const string WorkCompleteResourceName = "Dimmy.DevelopmentHelper._10._1._0.workcomplete";
 
         private static readonly string HookBindMountBinPath;
-        private static readonly IReadOnlyDictionary<AssemblyName, Assembly> AssemblyDictionary;
         private static readonly string HookName;
         private static readonly string WorkCompletePath;
         private static Configuration _config;
@@ -32,21 +29,17 @@ namespace Dimmy.DevelopmentHelper._10._1._0
             
             if(HookName == null)
                 return;
-
+            
             WorkCompletePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".workcomplete");
-
             HookBindMountBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, HookName, "bin");
-
+            
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
-            var assemblyDictionary = AppDomain.CurrentDomain.GetAssemblies()
-                .ToDictionary(x => x.GetName(), x => x);
-
-            AssemblyDictionary = new ReadOnlyDictionary<AssemblyName, Assembly>(assemblyDictionary);
         }
 
         public static void Initialise()
         {
+            LoadDeploymentHookAssemblies();
+            
             if (WorkComplete()) 
                 return;
             
@@ -55,7 +48,6 @@ namespace Dimmy.DevelopmentHelper._10._1._0
             ApplyWebConfigChanges();
             AddDevelopmentPerformanceConfigToSitecoreIncludes();
             AddHookLayer();
-            LoadDeploymentHookAssemblies();
             SetWorkComplete();
             
             _config.Save();
@@ -85,8 +77,6 @@ namespace Dimmy.DevelopmentHelper._10._1._0
         {
             try
             {
-
-
                 using (var stream = typeof(Initialiser).Assembly.GetManifestResourceStream(manifestResourceStreamName))
                 {
                     if (stream == null)
@@ -116,7 +106,6 @@ namespace Dimmy.DevelopmentHelper._10._1._0
             if (!(section is CompilationSection compilationSection) || compilationSection.OptimizeCompilations) return;
 
             compilationSection.OptimizeCompilations = true;
-            
         }
 
         private static bool WorkComplete()
@@ -160,34 +149,52 @@ namespace Dimmy.DevelopmentHelper._10._1._0
 
         private static void LoadDeploymentHookAssemblies()
         {
-
-            var section = _config.GetSectionGroup("runtime");
-
-            
             if(HookBindMountBinPath == null)
                 return;
-
+            
             var hookBindMountBinDirectory = new DirectoryInfo(HookBindMountBinPath);
             var hookBindMountAssemblies = hookBindMountBinDirectory.GetFiles("*.dll", SearchOption.TopDirectoryOnly);
 
+            var assemblyDictionary = AppDomain.CurrentDomain.GetAssemblies()
+                .ToDictionary(x => x.GetName(), x => x);
+            
             foreach (var file in hookBindMountAssemblies)
             {
-                var assemblyName = AssemblyName.GetAssemblyName(file.FullName);
-
-                if (!AssemblyDictionary.ContainsKey(assemblyName))
-                    //equivalent to adding the assembly name to compilation/assemblies in web.config
-                    AppDomain.CurrentDomain.Load(assemblyName);
+                var assemblyFile = File.ReadAllBytes(file.FullName);
+                var assemblyName = Assembly.Load(assemblyFile).GetName();
+                
+                if (assemblyDictionary.ContainsKey(assemblyName)) continue;
+                
+                //equivalent to adding the assembly name to compilation/assemblies in web.config
+                AppDomain.CurrentDomain.Load(assemblyFile);
             }
         }
         
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
+            
+            // Ignore missing resources
+            if (args.Name.Contains(".resources"))
+                return null;
+
+            // check for assemblies already loaded
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+            if (assembly != null)
+                return assembly;
+
             var assemblyPath = Path.Combine(HookBindMountBinPath, new AssemblyName(args.Name).Name + ".dll");
 
             if (!File.Exists(assemblyPath)) return null;
-
-            var assembly = Assembly.LoadFrom(assemblyPath);
-            return assembly;
+    
+            try
+            {
+                var assemblyFile = File.ReadAllBytes(assemblyPath);
+                return Assembly.Load(assemblyFile);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }
