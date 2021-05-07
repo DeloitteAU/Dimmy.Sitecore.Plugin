@@ -94,7 +94,7 @@ namespace Dimmy.Sitecore.Plugin
             else
             {
                 context.DockerComposeFilePath =
-                    Path.Join(TemplatePath, $"{argument.Topology}.docker-compose.yml");
+                    Path.Join(TemplatePath, $"{argument.Topology}.template.docker-compose.yml");
             }
             
             if (!string.IsNullOrEmpty(argument.DockerComposeTemplate))

@@ -17,7 +17,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
         {
             _hostsFileService = hostsFileService;
         }
-        public override async Task DoExecute(IStartProjectContext input)
+        public override void DoExecute(IStartProjectContext input)
         {
             var hostsFileEntries = new List<HostsFileEntryBase>();
             foreach (var service in input.DockerComposeFileConfig.ServiceDefinitions)

@@ -130,7 +130,7 @@ services:
     volumes:
       - type: bind
         source: .\build
-        target: c:\inetpub\wwwroot\${DEVELOPMENTHELPER_HOOK_NAME}
+        target: c:\deploy
       - type: bind
         source: .\logs\cd
         target: c:\inetpub\wwwroot\App_Data\logs
@@ -179,7 +179,7 @@ services:
     volumes:
       - type: bind
         source: .\build
-        target: c:\inetpub\wwwroot\${DEVELOPMENTHELPER_HOOK_NAME}
+        target: c:\deploy
       - type: bind
         source: .\logs\cm
         target: c:\inetpub\wwwroot\App_Data\logs

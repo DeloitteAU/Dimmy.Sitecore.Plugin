@@ -5,15 +5,15 @@ using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.InitialiseProject;
 using Dimmy.Engine.Services;
 
-namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
+namespace Dimmy.Sitecore.Plugin.Versions._10._0._0
 {
     public class SitecoreInitialise : SitecoreInitialiseBase<SitecoreInitialiseArgument>
     {
         private readonly ICertificateService _certificateService;
-        public override string Name => "sitecore-10.1.0";
-        public override string Description => "Initialise a Sitecore 10.1.0 project.";
+        public override string Name => "sitecore-10.0.0";
+        public override string Description => "Initialise a Sitecore 10.0.0 project.";
 
-        protected override string Version => "10.1.0";
+        protected override string Version => "10.0.0";
 
         public SitecoreInitialise(
             ICertificateService certificateService,
@@ -47,13 +47,12 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
             context.PublicVariables.Add("DevelopmentHelper.HookName", argument.DevelopmentHelperHookName);
             
             context.PrivateVariables.Add("Sitecore.AdminPassword", NonceService.Generate());
-            context.PrivateVariables.Add("Sitecore.MediaRequestProtectionSharedSecret", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Id.Secret", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Id.CertificatePassword", identityCertificatePassword);
             context.PrivateVariables.Add("Sitecore.Id.Certificate", x509IdentityCertificate2Base64String);
             context.PrivateVariables.Add("Sitecore.Rep.ApiKey", NonceService.Generate());
             context.PrivateVariables.Add("Sitecore.Xc.Engine.Authoring.ClientId", NonceService.Generate());
-            
+
             
             context.PublicVariables.Add("Sitecore.Id.HostName", argument.IdHostName);
             context.PublicVariables.Add("Sitecore.Cd.HostName", argument.CdHostName);
@@ -73,9 +72,6 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0
             context.PublicVariables.Add("Sitecore.Xc.Braintree.MerchantId", argument.XcBraintreeMerchantId);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.PublicKey", argument.XcBraintreePublicKey);
             context.PublicVariables.Add("Sitecore.Xc.Braintree.PrivateKey", argument.XcBraintreePrivateKey);
-            
-            
-            
         }
     }
 }

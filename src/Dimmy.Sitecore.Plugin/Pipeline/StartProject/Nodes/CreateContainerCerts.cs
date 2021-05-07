@@ -15,7 +15,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
     {
         private readonly ICertificateService _certificateService;
 
-        public override async Task DoExecute(IStartProjectContext input)
+        public override void DoExecute(IStartProjectContext input)
         {
             var traefikCertsPath = Path.Combine(input.WorkingPath, "traefik", "certs");
             if (!Directory.Exists(traefikCertsPath))
@@ -47,7 +47,7 @@ namespace Dimmy.Sitecore.Plugin.Pipeline.StartProject.Nodes
             
             var traefikConfigYaml = serializer.Serialize(traefikConfig);
 
-            await File.WriteAllTextAsync(
+            File.WriteAllText(
                 Path.Combine(traefikConfigPath, "certs_config.yaml"),
                 traefikConfigYaml);
         }
