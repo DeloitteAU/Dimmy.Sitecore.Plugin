@@ -84,13 +84,11 @@ namespace Dimmy.Sitecore.Plugin.Versions._10._1._0.Project.SubCommands
                 CopyFiles = copyFiles,
                 ContainerId = cm.ContainerId
             });
-
-            
             
             _dockerService
-                 .RunPowershellInContainer(cd.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1").Wait();
+                 .RunPowershellInContainer(cd.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1");
             _dockerService
-                .RunPowershellInContainer(cm.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1").Wait();
+                .RunPowershellInContainer(cm.ContainerId,"C:\\Dimmy.DevelopmentHelper._10._1._0.SetFullAccess.ps1");
         }
     }
 }

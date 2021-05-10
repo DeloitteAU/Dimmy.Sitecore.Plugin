@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using Dimmy.Cli.Commands.Project.SubCommands;
 using Dimmy.Engine.Pipelines;
 using Dimmy.Engine.Pipelines.InitialiseProject;
 using Dimmy.Engine.Services;
-using SharpCompress.Compressors;
-using SharpCompress.Compressors.Deflate;
+
 
 namespace Dimmy.Sitecore.Plugin
 {
