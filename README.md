@@ -1,3 +1,7 @@
+⚠️ This repository is no longer maintained and has been archived.
+
+---
+
 ![DimSim](/Dimmy.Sitecore.png) 
 
 # Dimmy.Sitecore.Plugin
